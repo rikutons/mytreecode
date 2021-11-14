@@ -24,5 +24,5 @@ public:
   void CreateTreeRecursive(BHNode* &, int &);
   void AssignChild(int, BHNode* &, int &);
   void DumpTree(int indent = 0);
-  void SetCmQuantities();
+  void CalcPhysicalQuantity();
 };

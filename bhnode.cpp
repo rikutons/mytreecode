@@ -37,6 +37,9 @@ void BHNode::AssignRoot(Vector3 root_pos, double length, Particle *p, int np)
   p->next = NULL;
 }
 
+/*
+  親ノードから再帰的に粒子を子ノードに割り当てていく関数
+*/
 void BHNode::CreateTreeRecursive(BHNode* &heap_top, int &heap_remainder)
 {
   for (int i = 0; i < 8; i++)
@@ -68,8 +71,8 @@ void BHNode::CreateTreeRecursive(BHNode* &heap_top, int &heap_remainder)
 
 /*
   まだその子ノードに粒子が登録されていない場合、
-  新しいBHNodeを割り当て、そこにその粒子を登録する関数。
-  割り当てられるBHNodeがもうない場合はエラーを返す。
+  新しいBHNodeを割り当て、そこにその粒子を登録する関数
+  割り当てられるBHNodeがもうない場合はエラーを返す
 */
 void BHNode::AssignChild(int subindex, BHNode* &heap_top, int &heap_remainder)
 {
@@ -121,5 +124,29 @@ void BHNode::DumpTree(int indent)
         child[i]->DumpTree(indent + 2);
       }
     }
+  }
+}
+
+/*
+  再帰的にノードの重心・質量を計算し、設定する関数
+*/
+void BHNode::CalcPhysicalQuantity()
+{
+  if (nparticle > 1)
+  {
+    int i;
+    pos = Vector3();
+    mass = 0.0;
+    for (i = 0; i < 8; i++)
+    {
+      if (child[i] != NULL)
+      {
+        child[i]->CalcPhysicalQuantity();
+        double mchild = child[i]->mass;
+        pos += mchild * child[i]->pos;
+        mass += mchild;
+      }
+    }
+    pos /= mass;
   }
 }
