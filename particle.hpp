@@ -11,21 +11,11 @@ class Particle{
   Particle *next;
   Particle() {}
 
-  void predict(double dt){
-    double dt2 = dt*dt*0.5;
-    pos = pos + dt * velocity + dt2 * acceralation;
-    velocity += (dt * 0.5) * acceralation;
+  void Predict(double dt){
+    pos += dt * velocity + dt * dt * acceralation / 2;
+    velocity += dt * acceralation / 2;
   }
-  void correct(double dt){
-    velocity +=  (dt*0.5)*acceralation;
+  void Correct(double dt){
+    velocity += dt * acceralation / 2;
   }
-  // Particle operator[](int index) &{
-  //   Particle* p = this;
-  //   for (int i = 0; i < index; i++)
-  //   {
-  //     p = p->next;
-  //     cout << i << endl;
-  //   }
-  //   return *p;
-  // }
 };

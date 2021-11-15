@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <random>
+#include <string>
 #include "common.h"
 #include "particle.hpp"
 #include "bhnode.hpp"
@@ -61,6 +63,51 @@ void create_uniform_sphere(Particle* particles, int n, double r){
   }
 }
 
+double CalculateSize(Particle * p, int n)
+{
+  double rsize = 1;
+  for (int i = 0; i < n; i++)
+  {
+    Vector3 ppos = p[i].pos;
+    for (int k = 0; k < 3; k++)
+    {
+      if (fabs(ppos[k]) > rsize)
+      {
+        rsize *= 2;
+      }
+    }
+  }
+  return rsize;
+}
+
+void CalculateGravity(BHNode *bn, int nnodes, Particle *pp, int n, double eps_square, double theta)
+{
+  double rsize = CalculateSize(pp, n);
+  bn->AssignRoot(Vector3(), rsize * 2, pp, n);
+  int heap_remainder = nnodes - 1;
+  BHNode *btmp = bn + 1;
+  bn->CreateTreeRecursive(btmp, heap_remainder);
+  //    bn->dump();
+  //    PRL(bn->sanity_check());
+  bn->CalcPhysicalQuantity();
+  clear_acc_and_phi(pp, n);
+
+  Particle *p = pp;
+  for (int i = 0; i < n; i++)
+  {
+    bn->CalcGravityUsingTree(*p, eps_square, theta);
+    //	PR(i); PR(p->pos);PR(p->phi); PRL(p->acc);
+    p++;
+  }
+}
+
+void Integrate(BHNode * bn, int nnodes, Particle * particles, int n, double eps_square, double theta, double dt)
+{
+  for (int i = 0; i < n; i++) particles[i].Predict(dt);
+  CalculateGravity(bn, nnodes, particles, n, eps_square, theta);
+  for (int i = 0; i < n; i++) particles[i].Correct(dt);
+}
+
 int main()
 {
   int n;
@@ -77,23 +124,25 @@ int main()
   }
 
   BHNode *nodes = NULL;
-  int nnodes = n * 2;
+  int nnodes = n * 2 + 100;
   nodes = new BHNode[nnodes];
-  nodes->AssignRoot(Vector3(), rsize * 2, particles, n);
-  int heap_remainder = nnodes - 1;
-  BHNode *btmp = nodes + 1;
-  nodes->CreateTreeRecursive(btmp, heap_remainder);
-  nodes->CalcPhysicalQuantity();
-  // nodes->DumpTree();
   double eps_square = 0.1 * 0.1;
   double theta_square = 0.5; // [rad^2]
-  // calculate_uncorrected_gravity_direct(particles, n, eps_square);
-  for (int i = 0; i < n; i++)
-  {
-    auto p = particles[i];
-    nodes->CalcGravityUsingTree(p, eps_square, theta_square);
-    PR(i); PR(p.pos);PR(p.phi); PRL(p.acceralation);
-  }
+  double dt = 0.01;
+  double end_time = 1;
+  int step = 0;
+  ofstream output_file;
+  string filename = "output.csv";
+  output_file.open(filename, ios::out);
+  output_file << "id,t,x,y,z" << endl;
 
+  for (double t = 0; t <= end_time; t += dt, step++)
+  {
+    Integrate(nodes, nnodes, particles, n, eps_square, theta_square, dt);
+    for (int i = 0; i < n; i++)
+    {
+      output_file << i << "," << t << "," << particles[i].pos << endl;
+    }
+  }
   return 0;
 }
