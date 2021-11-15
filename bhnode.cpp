@@ -101,7 +101,9 @@ void BHNode::DumpTree(int indent)
   int i;
   for (int i = 0; i < indent; i++) cerr << " ";
 
-  cerr << "Node center pos(" << centerPos << ") ";
+  cerr << "Center(" << centerPos << ") ";
+  PRF(pos);
+  PRF(mass);
   if (nparticle == 1)
   {
     cerr << "(LEAF) ";
@@ -148,5 +150,48 @@ void BHNode::CalcPhysicalQuantity()
       }
     }
     pos /= mass;
+  }
+}
+
+void BHNode::CalcGravityUsingTree(Particle &p, double eps_square, double theta_square) 
+{
+  p.acceralation = Vector3();
+  p.phi = p.mass / sqrt(eps_square);
+  AccumulateForceFromTree(p.pos, eps_square, theta_square, p.acceralation, p.phi);
+}
+
+void AccumulateForceFromPoint(Vector3 dx, double r_square, double eps_square,
+                                 Vector3 &acc,
+                                 double &phi,
+                                 double jmass)
+{
+  // double r2inv = 1 / (r2 + eps2);
+  // double rinv = sqrt(r2inv);
+  // double r3inv = r2inv * rinv;
+  // phi -= jmass * rinv;
+  // acc += jmass * r3inv * dx;
+
+  double r = sqrt(r_square + eps_square);
+  phi -= jmass / r;
+  acc += jmass * dx / powl(r, 3);
+}
+
+void BHNode::AccumulateForceFromTree(Vector3 &ipos, double eps_square, double theta_square, Vector3 &acc, double &phi)
+{
+  Vector3 dx = pos - ipos;
+  double r2 = dx * dx;
+  if ((r2 * theta_square > size * size) || (nparticle == 1))
+  {
+    AccumulateForceFromPoint(dx, r2, eps_square, acc, phi, mass);
+  }
+  else
+  {
+    for (int i = 0; i < 8; i++)
+    {
+      if (child[i] != NULL)
+      {
+        child[i]->AccumulateForceFromTree(ipos, eps_square, theta_square, acc, phi);
+      }
+    }
   }
 }

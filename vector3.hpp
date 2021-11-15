@@ -17,10 +17,22 @@ struct Vector3
     z += obj.z;
     return *this;
   }
+  Vector3 operator-(Vector3 obj){
+    return Vector3(x - obj.x, y - obj.y, z - obj.z);
+  }
+  Vector3 operator-=(Vector3 obj){
+    x -= obj.x;
+    y -= obj.y;
+    z -= obj.z;
+    return *this;
+  }
   Vector3 operator*(double obj){
     return Vector3(obj * x, obj * y, obj * z);
   }
   double operator*(Vector3 obj){
+    return x * obj.x + y * obj.y + z * obj.z;
+  }
+  double operator/(Vector3 obj){
     return x * obj.x + y * obj.y + z * obj.z;
   }
   Vector3 operator/=(double obj){
@@ -48,3 +60,4 @@ struct Vector3
 
 ostream& operator<<(ostream&, const Vector3);
 Vector3 operator*(double, Vector3);
+Vector3 operator/(Vector3, double);

@@ -25,4 +25,6 @@ public:
   void AssignChild(int, BHNode* &, int &);
   void DumpTree(int indent = 0);
   void CalcPhysicalQuantity();
+  void CalcGravityUsingTree(Particle &, double, double);
+  void AccumulateForceFromTree(Vector3 &, double, double, Vector3 &, double &);
 };
