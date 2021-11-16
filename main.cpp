@@ -8,18 +8,14 @@
 
 using namespace std;
 
-void accumulate_mutual_gravity(Particle & p1,
-			       Particle & p2,
-			       double eps2)
+void accumulate_mutual_gravity(Particle & p1, Particle & p2, double eps_square)
 {
-    Vector3 dx = p1.pos-p2.pos;
-    double r2inv = 1/(dx*dx+eps2);
-    double rinv  = sqrt(r2inv);
-    double r3inv = r2inv*rinv;
-    p1.phi -= p2.mass*rinv;
-    p2.phi -= p1.mass*rinv;
-    p1.acceralation -= p2.mass*r3inv*dx;
-    p2.acceralation += p1.mass*r3inv*dx;
+    Vector3 dx = p1.pos - p2.pos;
+    double r = sqrt(dx * dx + eps_square);
+    p1.phi -= p2.mass / r;
+    p2.phi -= p1.mass / r;
+    p1.acceralation -= p2.mass * dx / powl(r, 3);
+    p2.acceralation += p1.mass * dx / powl(r, 3);
 }
 
 void clear_acc_and_phi(Particle *parray, int n)
