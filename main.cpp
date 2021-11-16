@@ -44,7 +44,7 @@ void calculate_uncorrected_gravity_direct(Particle * parray, int n, double eps_s
 }
 
 
-void create_uniform_sphere(Particle* particles, int n, double r){
+void CreateUniformSphere(Particle* particles, int n, double power_index, double r){
   random_device rnd;
   // mt19937 mt(rnd()); 
   mt19937 mt(0); 
@@ -54,6 +54,7 @@ void create_uniform_sphere(Particle* particles, int n, double r){
     while (p * p > 1)
       for (int i = 0; i < 3; i++)
         p[i] = rand_real(mt);
+    p *= powl(x * x, 3.0 / (power_index + 3) - 1);
     particles[i].pos = r * p;
     particles[i].mass = 1.0 / n;
   }
@@ -107,17 +108,27 @@ void Integrate(BHNode * bn, int nnodes, Particle * particles, int n, double eps_
 int main()
 {
   int n;
-  cerr << "Enter n:";
+  cerr << "Enter n(number of particles): ";
   cin >> n;
+  double power_index;
+  cerr << "Enter power index: ";
+  cin >> power_index;
   Particle *particles = new Particle[n];
   double rsize = 1.0;
-  create_uniform_sphere(particles, n, rsize);
+  CreateUniformSphere(particles, n, power_index, rsize);
 
-  for (int i = 0; i < n; i++)
   {
-    PRC(i);
-    PRL(particles[i].pos);
+    int a;
+    cerr << "Do u wanna see particle's data? (yes:1, no:0): "
+    cin >> a;
+    if(a == 1)
+      for (int i = 0; i < n; i++)
+      {
+        PRC(i);
+        PRL(particles[i].pos);
+      }
   }
+
 
   BHNode *nodes = NULL;
   int nnodes = n * 2 + 100;
