@@ -18,4 +18,10 @@ class Particle{
   void Correct(double dt){
     velocity += dt * acceralation / 2;
   }
+  double CalcKineticEnergy(){
+    return mass * velocity * velocity / 2;
+  }
+  double CalcPotentialEnergy(){
+    return mass * phi / 2;
+  }
 };

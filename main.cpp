@@ -77,6 +77,33 @@ double CalculateSize(Particle * p, int n)
   return rsize;
 }
 
+void PrintMassHeart(Particle * particles, int n, ofstream &fout)
+{
+  Vector3 cmpos = Vector3();
+  Vector3 cmvel = Vector3();
+  double cmmass = 0.0;
+  for(int i = 0; i < n; i++) {
+    cmpos += particles[i].mass * particles[i].pos;
+    cmvel += particles[i].mass * particles[i].velocity;
+    cmmass += particles[i].mass;
+  }
+  cmpos /= cmmass;
+  cmvel /= cmmass;
+  cerr << "cm pos = " << cmpos << " vel = " << cmvel <<endl;
+  fout << cmpos << "," << cmvel;
+}
+
+void PrintEnergies(Particle *particles, int n, ofstream &fout){
+  double ke = 0, pe = 0;
+  for (int i = 0; i < n; i++)
+  {
+    ke += particles[i].CalcKineticEnergy();
+    pe += particles[i].CalcPotentialEnergy();
+  }
+  double total_energy = ke + pe;
+  fout << "," << total_energy << endl;
+}
+
 void CalculateGravity(BHNode *bn, int nnodes, Particle *pp, int n, double eps_square, double theta)
 {
   double rsize = CalculateSize(pp, n);
@@ -139,9 +166,11 @@ int main()
   double end_time = 1;
   int step = 0;
   ofstream output_file;
-  string filename = "output.csv";
-  output_file.open(filename, ios::out);
+  output_file.open("output.csv", ios::out);
   output_file << "id,t,x,y,z" << endl;
+  ofstream status_output_file;
+  status_output_file.open("status_output.csv", ios::out);
+  status_output_file << "t,m_x,m_y,m_z,m_vx,m_vy,m_vz,total_energy" << endl;
 
   for (double t = 0; t <= end_time; t += dt, step++)
   {
@@ -150,6 +179,9 @@ int main()
     {
       output_file << i << "," << t << "," << particles[i].pos << endl;
     }
+    status_output_file << t << ",";
+    PrintMassHeart(particles, n, status_output_file);
+    PrintEnergies(particles, n, status_output_file);
   }
   return 0;
 }
