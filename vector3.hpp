@@ -32,6 +32,12 @@ struct Vector3
   double operator*(Vector3 obj){
     return x * obj.x + y * obj.y + z * obj.z;
   }
+  Vector3 operator*=(double obj){
+    x *= obj;
+    y *= obj;
+    z *= obj;
+    return *this;
+  }
   double operator/(Vector3 obj){
     return x * obj.x + y * obj.y + z * obj.z;
   }

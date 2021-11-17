@@ -54,7 +54,7 @@ void CreateUniformSphere(Particle* particles, int n, double power_index, double 
     while (p * p > 1)
       for (int i = 0; i < 3; i++)
         p[i] = rand_real(mt);
-    p *= powl(x * x, 3.0 / (power_index + 3) - 1);
+    p *= powl(p * p, 3.0 / (power_index + 3) - 1);
     particles[i].pos = r * p;
     particles[i].mass = 1.0 / n;
   }
@@ -119,7 +119,7 @@ int main()
 
   {
     int a;
-    cerr << "Do u wanna see particle's data? (yes:1, no:0): "
+    cerr << "Do u wanna see particle's data? (yes:1, no:0): ";
     cin >> a;
     if(a == 1)
       for (int i = 0; i < n; i++)
