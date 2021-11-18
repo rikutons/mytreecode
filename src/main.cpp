@@ -166,10 +166,10 @@ int main()
   double end_time = 1;
   int step = 0;
   ofstream output_file;
-  output_file.open("output.csv", ios::out);
+  output_file.open("../output/output.csv", ios::out);
   output_file << "id,t,x,y,z" << endl;
   ofstream status_output_file;
-  status_output_file.open("status_output.csv", ios::out);
+  status_output_file.open("../output/status_output.csv", ios::out);
   status_output_file << "t,m_x,m_y,m_z,m_vx,m_vy,m_vz,total_energy" << endl;
 
   for (double t = 0; t <= end_time; t += dt, step++)

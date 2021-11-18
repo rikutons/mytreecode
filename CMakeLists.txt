@@ -1,1 +1,1 @@
-add_executable(a.out main.cpp bhnode.cpp vector3.cpp)
+add_executable(a.out src/main.cpp src/bhnode.cpp src/vector3.cpp)

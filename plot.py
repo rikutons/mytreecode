@@ -5,8 +5,8 @@ import plotly.express as px
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
-dataset = pd.read_csv("build/output.csv")
-status_data = pd.read_csv("build/status_output.csv")
+dataset = pd.read_csv("output/output.csv")
+status_data = pd.read_csv("output/status_output.csv")
 print(dataset)
 
 # make figure
@@ -125,7 +125,7 @@ fig2.update_xaxes(fixedrange=True)
 env = Environment(loader=FileSystemLoader('./'))
 tpl = env.get_template('dashboard.html.jinja')
 html = tpl.render(main_fig=fig1.to_html(full_html=False), sub_fig=fig2.to_html(full_html=False))
-filename="build/dashboard.html"
+filename="output/dashboard.html"
 dashboard = open(filename, 'w')
 dashboard.write(html)
 subprocess.run("xdg-open " + filename, shell = True)
