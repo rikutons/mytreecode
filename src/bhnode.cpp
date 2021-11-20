@@ -17,7 +17,6 @@ int CalcChildIndex(Vector3 pos, Vector3 cpos)
   return subindex;
 }
 
-
 /*
   pfirst -> p[0] -> p[1] ...
   のようなリストを作成し、メンバ変数pfirstに格納する関数
@@ -40,11 +39,12 @@ void BHNode::AssignRoot(Vector3 root_pos, double length, Particle *p, int np)
 /*
   親ノードから再帰的に粒子を子ノードに割り当てていく関数
 */
-void BHNode::CreateTreeRecursive(BHNode* &heap_top, int &heap_remainder)
+void BHNode::CreateTreeRecursive(BHNode *&heap_top, int &heap_remainder)
 {
   for (int i = 0; i < 8; i++)
     child[i] = NULL;
   Particle *p = pfirst;
+
   // このノードが持つ全てのパーティクルについて操作
   for (int i = 0; i < nparticle; i++)
   {
@@ -58,7 +58,6 @@ void BHNode::CreateTreeRecursive(BHNode* &heap_top, int &heap_remainder)
   }
   for (int i = 0; i < 8; i++)
     if (child[i] != NULL)
-    {
       if (child[i]->nparticle > 1)
         child[i]->CreateTreeRecursive(heap_top, heap_remainder);
       else
@@ -66,7 +65,6 @@ void BHNode::CreateTreeRecursive(BHNode* &heap_top, int &heap_remainder)
         child[i]->pos = child[i]->pfirst->pos;
         child[i]->mass = child[i]->pfirst->mass;
       }
-    }
 }
 
 /*
@@ -74,11 +72,11 @@ void BHNode::CreateTreeRecursive(BHNode* &heap_top, int &heap_remainder)
   新しいBHNodeを割り当て、そこにその粒子を登録する関数
   割り当てられるBHNodeがもうない場合はエラーを返す
 */
-void BHNode::AssignChild(int subindex, BHNode* &heap_top, int &heap_remainder)
+void BHNode::AssignChild(int subindex, BHNode *&heap_top, int &heap_remainder)
 {
   if (heap_remainder <= 0)
   {
-    cerr << "create_tree: no more free node... exit\n";
+    cerr << "create_tree: no more free node... exit" << endl;
     exit(1);
   }
   if (child[subindex] == NULL)
@@ -87,10 +85,10 @@ void BHNode::AssignChild(int subindex, BHNode* &heap_top, int &heap_remainder)
     heap_top++;
     heap_remainder--;
     child[subindex]->centerPos = centerPos +
-                            Vector3(
-                                ((subindex & 4) * 0.5 - 1) * size / 4, // !!(subindex & 4)でよさそう
-                                ((subindex & 2) - 1) * size / 4,
-                                ((subindex & 1) * 2 - 1) * size / 4);
+                                 Vector3(
+                                     ((subindex & 4) * 0.5 - 1) * size / 4,
+                                     ((subindex & 2) - 1) * size / 4,
+                                     ((subindex & 1) * 2 - 1) * size / 4);
     child[subindex]->size = size * 0.5;
     child[subindex]->nparticle = 0;
   }
@@ -99,8 +97,8 @@ void BHNode::AssignChild(int subindex, BHNode* &heap_top, int &heap_remainder)
 void BHNode::DumpTree(int indent)
 {
   int i;
-  for (int i = 0; i < indent; i++) cerr << " ";
-
+  for (int i = 0; i < indent; i++)
+    cerr << " ";
   cerr << "Center(" << centerPos << ") ";
   PRF(pos);
   PRF(mass);
@@ -111,7 +109,8 @@ void BHNode::DumpTree(int indent)
     Particle *p = pfirst;
     for (i = 0; i < nparticle; i++)
     {
-      for (int j = 0; j < indent + 2; j++) cerr << " ";
+      for (int j = 0; j < indent + 2; j++)
+        cerr << " ";
       PRL(p->pos);
       p = p->next;
     }
@@ -120,12 +119,8 @@ void BHNode::DumpTree(int indent)
   {
     PRL(nparticle);
     for (i = 0; i < 8; i++)
-    {
       if (child[i] != NULL)
-      {
         child[i]->DumpTree(indent + 2);
-      }
-    }
   }
 }
 
@@ -140,7 +135,6 @@ void BHNode::CalcPhysicalQuantity()
     pos = Vector3();
     mass = 0.0;
     for (i = 0; i < 8; i++)
-    {
       if (child[i] != NULL)
       {
         child[i]->CalcPhysicalQuantity();
@@ -148,50 +142,32 @@ void BHNode::CalcPhysicalQuantity()
         pos += mchild * child[i]->pos;
         mass += mchild;
       }
-    }
     pos /= mass;
   }
 }
 
-void BHNode::CalcGravityUsingTree(Particle &p, double eps_square, double theta_square) 
+void BHNode::CalcGravityUsingTree(Particle &p, double eps_square, double theta_square)
 {
   p.acceralation = Vector3();
   p.phi = p.mass / sqrt(eps_square);
-  AccumulateForceFromTree(p.pos, eps_square, theta_square, p.acceralation, p.phi);
+  AccumulateForceFromTree(p, eps_square, theta_square);
 }
 
-void AccumulateForceFromPoint(Vector3 dx, double r_square, double eps_square,
-                                 Vector3 &acc,
-                                 double &phi,
-                                 double jmass)
+void BHNode::AccumulateForceFromPoint(Vector3 dx, double r_square, double eps_square, Particle &particle)
 {
-  // double r2inv = 1 / (r2 + eps2);
-  // double rinv = sqrt(r2inv);
-  // double r3inv = r2inv * rinv;
-  // phi -= jmass * rinv;
-  // acc += jmass * r3inv * dx;
-
   double r = sqrt(r_square + eps_square);
-  phi -= jmass / r;
-  acc += jmass * dx / powl(r, 3);
+  particle.phi -= mass / r;
+  particle.acceralation += mass * dx / powl(r, 3);
 }
 
-void BHNode::AccumulateForceFromTree(Vector3 &ipos, double eps_square, double theta_square, Vector3 &acc, double &phi)
+void BHNode::AccumulateForceFromTree(Particle &particle, double eps_square, double theta_square)
 {
-  Vector3 dx = pos - ipos;
-  double r2 = dx * dx;
-  if ((r2 * theta_square > size * size) || (nparticle == 1))
-  {
-    AccumulateForceFromPoint(dx, r2, eps_square, acc, phi, mass);
-  }
+  Vector3 dx = pos - particle.pos;
+  double r_square = dx * dx;
+  if ((r_square * theta_square > size * size) || (nparticle == 1))
+    AccumulateForceFromPoint(dx, r_square, eps_square, particle);
   else
-  {
     for (int i = 0; i < 8; i++)
-    {
       if (child[i] != NULL)
-      {
-        child[i]->AccumulateForceFromTree(ipos, eps_square, theta_square, acc, phi);
-      }
-    }
-  }
+        child[i]->AccumulateForceFromTree(particle, eps_square, theta_square);
 }

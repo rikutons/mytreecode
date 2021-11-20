@@ -20,11 +20,12 @@ public:
     pfirst = NULL;
   }
 
-  void AssignRoot(Vector3, double, Particle*, int);
-  void CreateTreeRecursive(BHNode* &, int &);
-  void AssignChild(int, BHNode* &, int &);
+  void AssignRoot(Vector3, double, Particle *, int);
+  void CreateTreeRecursive(BHNode *&, int &);
+  void AssignChild(int, BHNode *&, int &);
   void DumpTree(int indent = 0);
   void CalcPhysicalQuantity();
   void CalcGravityUsingTree(Particle &, double, double);
-  void AccumulateForceFromTree(Vector3 &, double, double, Vector3 &, double &);
+  void AccumulateForceFromPoint(Vector3, double, double, Particle &);
+  void AccumulateForceFromTree(Particle &, double, double);
 };
