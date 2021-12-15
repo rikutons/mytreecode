@@ -94,6 +94,9 @@ void BHNode::AssignChild(int subindex, BHNode *&heap_top, int &heap_remainder)
   }
 }
 
+/*
+  ツリーの中身を表示する関数
+*/
 void BHNode::DumpTree(int indent)
 {
   int i;
@@ -146,6 +149,9 @@ void BHNode::CalcPhysicalQuantity()
   }
 }
 
+/*
+  粒子とツリーの力を計算し、パーティクルのパラメータを変える関数
+*/
 void BHNode::CalcGravityUsingTree(Particle &p, double eps_square, double theta_square)
 {
   p.acceralation = Vector3();

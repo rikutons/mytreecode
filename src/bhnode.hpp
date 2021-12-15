@@ -9,7 +9,7 @@ class BHNode
   BHNode *child[8];
   Particle *pfirst;
   int nparticle;
-  Vector3 pos;
+  Vector3 pos; // 重心の位置
   double mass;
 
 public:
