@@ -26,6 +26,12 @@ void TreeSimulator::ClearAccAndPhi(Particle *parray, int n)
   }
 }
 
+TreeSimulator::TreeSimulator(ArgumentInterpreter arguments) : SimulatorBase(arguments)
+{
+  nnodes = n * 2 + 100;
+  nodes = new BHNode[nnodes];
+}
+
 /*
   最も外側にある粒子を内包するような最小の立方体の大きさ( ÷ 2)を返す。
   2の整数乗の値のみを持つ。

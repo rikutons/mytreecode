@@ -1,35 +1,58 @@
 #include <iostream>
 #include <chrono>
-#include "tree_simulator.hpp"
-#include "simple_simulator.hpp"
+#include "argument_interpreter.hpp"
+#include "simulators/tree_simulator.hpp"
+#include "simulators/simple_simulator.hpp"
+#include "simulators/hdd_powered_simulator.hpp"
 
 using namespace std;
 using namespace chrono;
 
-void show_time(system_clock::time_point start, system_clock::time_point end){
+void show_time(string message, system_clock::time_point start, system_clock::time_point end){
     double time = static_cast<double>(duration_cast<microseconds>(end - start).count() / 1000.0);
-    cout << "time" << time << "[ms]" << endl;
+    cout << message << ": " << time << "[ms]" << endl;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
   ios::sync_with_stdio(false);
-  cin.tie(nullptr);
 
   system_clock::time_point start, end;
+  ArgumentInterpreter arguments(argc, argv);
+
+  int s;
+  cout << "0. Simple Simulator" << endl;
+  cout << "1. Tree Simulator" << endl;
+  cout << "2. HDD Powered Tree Simulator" << endl;
+  cout << "Select Simulator: ";
+  cin >> s;
+  SimulatorBase *simulator;
+  cout << "Initialization Start" << endl;
   start = system_clock::now();
-
-  auto simulator = new TreeSimulator();
-  // auto simulator = new SimpleSimulator();
+  switch (s)
+  {
+  case 0:
+    /* code */
+    simulator = new SimpleSimulator(arguments);
+    break;
+  case 1:
+    simulator = new TreeSimulator(arguments);
+    break;
+  case 2:
+    simulator = new HDDPoweredSimulator(arguments);
+    break;
+  default:
+    break;
+  }
 
   end = system_clock::now();
-  show_time(start, end);
-  start = end;
+  show_time("Initialization End", start, end);
 
+  cout << "Simulation Start" << endl;
+  start = system_clock::now();
   simulator->Simulate();
-
   end = system_clock::now();
-  show_time(start, end);
+  show_time("Simulation End", start, end);
 
   return 0;
 }

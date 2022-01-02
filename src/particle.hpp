@@ -10,6 +10,7 @@ public:
   double mass;
   double phi; // 位置エネルギー
   Particle *next;
+  int index;
   Particle() {}
 
   void Predict(double dt)
@@ -28,5 +29,9 @@ public:
   double CalcPotentialEnergy()
   {
     return mass * phi / 2;
+  }
+  string ToDataString()
+  {
+    return to_string(index) + " " + to_string(mass) + " " + to_string(pos) + " " + to_string(velocity) + " " + to_string(acceralation);
   }
 };

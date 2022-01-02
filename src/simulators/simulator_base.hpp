@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
-#include "bhnode.hpp"
+#include "../bhnode.hpp"
+#include "../argument_interpreter.hpp"
 
 /*
   抽象クラス。
@@ -8,32 +9,35 @@
 */
 class SimulatorBase
 {
-private:
-  void OpenFiles();
+  void OpenFiles(string);
   void InitParticlesOnSphereShape();
+  void InitParticlesOnAlignedShape();
   int AskSeeParticles();
-  void Output(double t);
   void PrintMassHeart(Particle *particles, int n);
   void PrintEnergies(Particle *particles, int n);
   virtual void Step() = 0;
+  void ReadParticles();
 
 protected:
+  virtual void Output();
   /* data */
   int n; // 粒子の総数
+  double t;
   double power_index;
   double rsize;
   BHNode *nodes;
   int nnodes;
   double eps_square = 0.1 * 0.1;
   double theta_square = 0.5; // [rad^2]
-  double dt = 0.01;
-  double end_time = 1;
+  double dt;
+  double end_time;
   int step = 0;
-  Particle *particles = new Particle[n];
+  Particle *particles;
+  ifstream input_file;
   ofstream output_file;
   ofstream status_output_file;
 
 public:
-  SimulatorBase();
+  SimulatorBase(ArgumentInterpreter, bool allocate_memory = true);
   void Simulate();
 };

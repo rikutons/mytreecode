@@ -50,12 +50,15 @@ void BHNode::CreateTreeRecursive(BHNode *&heap_top, int &heap_remainder)
   {
     Particle *pnext = p->next;
     int sub_index = CalcChildIndex(p->pos, centerPos);
+    // cout << " [Particle " << i << "] index: " << sub_index << ", pos: " << p->pos << endl;
     AssignChild(sub_index, heap_top, heap_remainder);
     child[sub_index]->nparticle++;
     p->next = child[sub_index]->pfirst;
     child[sub_index]->pfirst = p;
     p = pnext;
   }
+  // int poop;
+  // cin >> poop;
   for (int i = 0; i < 8; i++)
     if (child[i] != NULL)
       if (child[i]->nparticle > 1)
@@ -89,6 +92,7 @@ void BHNode::AssignChild(int subindex, BHNode *&heap_top, int &heap_remainder)
                                      ((subindex & 4) * 0.5 - 1) * size / 4,
                                      ((subindex & 2) - 1) * size / 4,
                                      ((subindex & 1) * 2 - 1) * size / 4);
+    // cout << " [Assign " << subindex << "] , center: " << centerPos << endl;
     child[subindex]->size = size * 0.5;
     child[subindex]->nparticle = 0;
   }

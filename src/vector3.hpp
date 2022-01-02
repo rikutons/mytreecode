@@ -62,3 +62,4 @@ struct Vector3
 
 ostream &operator<<(ostream &, const Vector3);
 Vector3 operator*(double, Vector3);
+string to_string(Vector3);

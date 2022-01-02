@@ -2,7 +2,7 @@
 #include "vector3.hpp"
 #include "particle.hpp"
 
-class BHNode
+struct BHNode
 {
   Vector3 centerPos;
   double size;
@@ -11,8 +11,6 @@ class BHNode
   int nparticle;
   Vector3 pos; // 重心の位置
   double mass;
-
-public:
   BHNode()
   {
     for (int i = 0; i < 8; i++)

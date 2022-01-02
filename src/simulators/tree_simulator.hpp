@@ -7,4 +7,6 @@ class TreeSimulator : public SimulatorBase
   void CalculateGravity(BHNode *bn, int nnodes, Particle *particles, int n, double eps_square, double theta);
   double CalculateSize(Particle *p, int n);
   void ClearAccAndPhi(Particle *parray, int n);
+public:
+  TreeSimulator(ArgumentInterpreter arguments);
 };

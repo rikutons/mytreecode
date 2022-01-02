@@ -128,4 +128,4 @@ html = tpl.render(main_fig=fig1.to_html(full_html=False), sub_fig=fig2.to_html(f
 filename="output/dashboard.html"
 dashboard = open(filename, 'w')
 dashboard.write(html)
-subprocess.run("xdg-open " + filename, shell = True)
+# subprocess.run("xdg-open " + filename, shell = True)

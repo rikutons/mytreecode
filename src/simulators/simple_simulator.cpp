@@ -1,5 +1,5 @@
 #include "simple_simulator.hpp"
-void SimpleSimulator::ClearAccAndPhi(Particle *parray, int n) 
+void SimpleSimulator::ClearAccAndPhi(Particle *parray, int n)
 {
   Particle *p = parray;
   for (int i = 0; i < n; i++)
@@ -31,7 +31,7 @@ void SimpleSimulator::Step()
   for (i = 0, pi = particles; i < n - 1; i++, pi++)
     for (j = i + 1, pj = pi + 1; j < n; j++, pj++)
       AccumulateMutualGravity(*pi, *pj, eps_square);
+
   for (int i = 0; i < n; i++)
     particles[i].Correct(dt);
-  
 }
