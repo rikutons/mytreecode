@@ -64,16 +64,29 @@ int SubArea::MakeLET(BHNode node)
 */
 void SubArea::AccumulateLETGravity(Particle particles[]) 
 {
-  for (int i = 0; i < n; i++)
-  {
-    particles[i].acceralation = Vector3();
-    for (auto node : LET)
+    for (int i = 0; i < n; i++)
     {
-      Vector3 dx = particles[i].pos - node.pos;
-      double r = sqrt(dx * dx + eps_square);
-      particles[i].phi -= node.mass / r;
-      particles[i].acceralation -= node.mass * dx / powl(r, 3);
+      for (auto node : LET)
+      {
+          Vector3 dx = particles[i].pos - node.pos;
+          double r = sqrt(dx * dx + eps_square);
+          particles[i].phi -= node.mass / r;
+          particles[i].acceralation -= node.mass * dx / powl(r, 3);
+      }
     }
+    LET.clear();
+}
+
+void SubArea::UseQueue() 
+{
+  if(particle_queue.empty())
+    return;
+  output_file.open(tmpfile_path, ios_base::app);
+  while (!particle_queue.empty()) {
+    Particle p = particle_queue.front();
+    particle_queue.pop();
+    Write(p.ToDataString());
+    n++;
   }
-  LET.clear();
+  output_file.close();
 }

@@ -23,7 +23,8 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
 
   nnodes = n / div_num * 2 + 100;
   nodes = new BHNode[nnodes];
-  particles = new Particle[n / div_num + 1];
+  particle_maxnum = n / div_num + 100;
+  particles = new Particle[particle_maxnum]; // !注意! 粒子の交換に対して100粒子分しか余裕を持たせていません
 
   for (int i = 0; i < n; i++)
   {
@@ -121,13 +122,29 @@ void HDDPoweredSimulator::Step()
     sub_areas[i].BeginWrite();
     for (int j = 0; j < num; j++)
     {
-      sub_areas[i].Write(particles[j].ToDataString());
+      int index = GetIndex(particles[j].pos);
+      if(i == index)
+        sub_areas[i].Write(particles[j].ToDataString());
+      else
+        sub_areas[index].particle_queue.push(particles[j]);
       output_file << particles[j].index << "," << t << "," << particles[j].pos << endl;
       ke += particles[j].CalcKineticEnergy();
       pe += particles[j].CalcPotentialEnergy();
     }
     sub_areas[i].EndWrite();
   }
+
+  for (int i = 0; i < div_num; i++)
+  {
+    sub_areas[i].UseQueue();
+    if(sub_areas[i].n > particle_maxnum)
+    {
+      cout << "[ERROR] Particle's array size is not enough!" << endl;
+      cout << "Subarea" << i << " have " << sub_areas[i].n << " particles but array size is " << particle_maxnum << "." << endl;
+      cout << "Check particle_maxnum on hdd_powered_simulator.cpp." << endl;
+    }
+  }
+  
   energy = ke + pe;
 }
 

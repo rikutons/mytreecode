@@ -8,6 +8,7 @@ class HDDPoweredSimulator : public SimulatorBase
   Particle *next_particles;
   SubArea *sub_areas;
   double energy;
+  int particle_maxnum;
 
 private:
   int GetIndex(Vector3 pos);

@@ -1,5 +1,6 @@
 #include <fstream>
 #include <vector>
+#include <queue>
 #include "vector3.hpp"
 #include "particle.hpp"
 #include "bhnode.hpp"
@@ -16,9 +17,10 @@ class SubArea
   ofstream output_file;
   bool first_write_flag;
   vector<Object> LET;
-  int n;
 
 public:
+  queue<Particle> particle_queue;
+  int n;
   double theta_square;
   double eps_square;
   string tmpfile_path;
@@ -31,4 +33,5 @@ public:
   int Read(Particle[]);
   int MakeLET(BHNode);
   void AccumulateLETGravity(Particle[]);
+  void UseQueue();
 };
