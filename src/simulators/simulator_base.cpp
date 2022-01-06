@@ -12,6 +12,9 @@ SimulatorBase::SimulatorBase(ArgumentInterpreter arguments, bool allocate_memory
     // cerr << "Enter power index: ";
     // cin >> power_index;
 
+    if(allocate_memory)
+      particles = new Particle[n];
+
     InitParticlesOnAlignedShape();
     if (AskSeeParticles() == 1)
       for (int i = 0; i < n; i++)
@@ -19,9 +22,6 @@ SimulatorBase::SimulatorBase(ArgumentInterpreter arguments, bool allocate_memory
         PRC(i);
         PRL(particles[i].pos);
       }
-
-    if(allocate_memory)
-      particles = new Particle[n];
   }
   else
   {
@@ -78,8 +78,8 @@ void SimulatorBase::InitParticlesOnSphereShape()
   {
     Vector3 p(1, 1, 1);
     while (p * p > 1)
-      for (int i = 0; i < 3; i++)
-        p[i] = rand_real(mt);
+      for (int j = 0; j < 3; j++)
+        p[j] = rand_real(mt);
     p *= powl(p * p, 3.0 / (power_index + 3) - 1);
     particles[i].pos = rsize * p;
     particles[i].mass = 1.0 / n;
@@ -99,11 +99,11 @@ void SimulatorBase::InitParticlesOnAlignedShape()
   {
     int index = 8 * i / n;
     Vector3 p;
-    for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++)
     {
-      p[i] = rand_real(mt);
-      if(index & (1 << i))
-        p[i] *= -1;
+      p[j] = rand_real(mt);
+      if(index & (1 << j))
+        p[j] *= -1;
     }
     particles[i].pos = rsize * p;
     particles[i].mass = 1.0 / n;
