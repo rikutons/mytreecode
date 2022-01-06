@@ -4,6 +4,7 @@
 #include "simulators/tree_simulator.hpp"
 #include "simulators/simple_simulator.hpp"
 #include "simulators/hdd_powered_simulator.hpp"
+#include "sub_area.hpp"
 
 using namespace std;
 using namespace chrono;
@@ -20,16 +21,16 @@ int main(int argc, char* argv[])
   system_clock::time_point start, end;
   ArgumentInterpreter arguments(argc, argv);
 
-  int s;
+  int mode;
   cout << "0. Simple Simulator" << endl;
   cout << "1. Tree Simulator" << endl;
   cout << "2. HDD Powered Tree Simulator" << endl;
   cout << "Select Simulator: ";
-  cin >> s;
+  cin >> mode;
   SimulatorBase *simulator;
   cout << "Initialization Start" << endl;
   start = system_clock::now();
-  switch (s)
+  switch (mode)
   {
   case 0:
     /* code */
@@ -53,6 +54,11 @@ int main(int argc, char* argv[])
   simulator->Simulate();
   end = system_clock::now();
   show_time("Simulation End", start, end);
+  if(mode == 2)
+  {
+    cout << "write: " << SubArea::write_time << "[ms]" << endl;
+    cout << "read: " << SubArea::read_time << "[ms]" << endl;
+  }
 
   return 0;
 }

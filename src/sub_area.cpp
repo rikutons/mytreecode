@@ -1,14 +1,20 @@
 #include "sub_area.hpp"
 
+double SubArea::read_time = 0;
+double SubArea::write_time = 0;
 
 void SubArea::BeginWrite() 
 {
+  start = system_clock::now();
   output_file.open(tmpfile_path);
   first_write_flag = true;  // 最終行が空行になってしまう現象をフラグを用いて回避する
+  end = system_clock::now();
+  AddWriteTime();
 }
 
 void SubArea::Write(string s) 
 {
+  start = system_clock::now();
   if (first_write_flag)
   {
     output_file << s;
@@ -18,11 +24,16 @@ void SubArea::Write(string s)
   {
     output_file << endl << s;
   }
+  end = system_clock::now();
+  AddWriteTime();
 }
 
 void SubArea::EndWrite() 
 {
+  start = system_clock::now();
   output_file.close();
+  end = system_clock::now();
+  AddWriteTime();
 }
 
 /*
@@ -31,6 +42,7 @@ void SubArea::EndWrite()
 */
 int SubArea::Read(Particle particles[]) 
 {
+  start = system_clock::now();
   int i = 0;
   input_file.open(tmpfile_path);
   while(!input_file.eof())
@@ -40,6 +52,8 @@ int SubArea::Read(Particle particles[])
     i++;
   }
   input_file.close();
+  end = system_clock::now();
+  AddReadTime();
   return n = i;
 }
 
@@ -89,4 +103,14 @@ void SubArea::UseQueue()
     n++;
   }
   output_file.close();
+}
+
+void SubArea::AddReadTime() 
+{
+  read_time += static_cast<double>(duration_cast<microseconds>(end - start).count() / 1000.0);
+}
+
+void SubArea::AddWriteTime() 
+{
+  write_time += static_cast<double>(duration_cast<microseconds>(end - start).count() / 1000.0);
 }

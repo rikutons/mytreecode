@@ -37,14 +37,6 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
   }
   for (int i = 0; i < div_num; i++)
     sub_areas[i].EndWrite();
-}
-
-void HDDPoweredSimulator::Step() 
-{
-  // cout << "Start Step " << step << endl;
-  // cout << "Phase 1: Make LET" << endl;
-  double ke = 0;
-  double pe = 0;
 
   for (int i = 0; i < div_num; i++)
   {
@@ -57,25 +49,17 @@ void HDDPoweredSimulator::Step()
     }
     sub_areas[i].EndWrite();
   }
+}
+
+void HDDPoweredSimulator::Step() 
+{
+  // cout << "Start Step " << step << endl;
+  // cout << "Phase 1: Make LET" << endl;
+  double ke = 0;
+  double pe = 0;
 
   for (int i = 0; i < div_num; i++)
   {
-    // #pragma omp parallel
-    // {
-    //   if(omp_get_thread_num() == 0){
-    //     // 領域 i のパーティクルを読みこむ
-    //     ReadParticles(i + 1);
-    //   }
-    //   else{
-    //     #pragma omp for
-    //     for (int j = 0; j < div_num; j++){
-    //       // 領域 j から見たLETを作ってメモリに保存する
-    //       GetCenterPos(j);
-    //     }
-    //   }
-    // }
-    // delete[] particles;
-    // particles = next_particles;
     int num = sub_areas[i].Read(particles);
     // cout << "SubArea " << i << " have " << num << " particles  |  ";
     nodes->AssignRoot(sub_areas[i].center_pos, rsize * 2, particles, num);
@@ -116,20 +100,19 @@ void HDDPoweredSimulator::Step()
       nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
     sub_areas[i].AccumulateLETGravity(particles);
 
-    for (int j = 0; j < num; j++)
-      particles[j].Correct(dt);
-
     sub_areas[i].BeginWrite();
     for (int j = 0; j < num; j++)
     {
+      particles[j].Correct(dt);
       int index = GetIndex(particles[j].pos);
       if(i == index)
         sub_areas[i].Write(particles[j].ToDataString());
       else
         sub_areas[index].particle_queue.push(particles[j]);
-      output_file << particles[j].index << "," << t << "," << particles[j].pos << endl;
       ke += particles[j].CalcKineticEnergy();
       pe += particles[j].CalcPotentialEnergy();
+      particles[j].Predict(dt);
+      output_file << particles[j].index << "," << t << "," << particles[j].pos << endl;
     }
     sub_areas[i].EndWrite();
   }

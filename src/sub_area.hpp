@@ -1,9 +1,12 @@
+#pragma once
 #include <fstream>
 #include <vector>
 #include <queue>
+#include <chrono>
 #include "vector3.hpp"
 #include "particle.hpp"
 #include "bhnode.hpp"
+using namespace chrono;
 
 struct Object
 {
@@ -17,8 +20,13 @@ class SubArea
   ofstream output_file;
   bool first_write_flag;
   vector<Object> LET;
+  system_clock::time_point start, end;
+  void AddReadTime();
+  void AddWriteTime();
 
 public:
+  static double read_time;
+  static double write_time;
   queue<Particle> particle_queue;
   int n;
   double theta_square;

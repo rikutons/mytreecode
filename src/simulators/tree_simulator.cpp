@@ -12,7 +12,6 @@ void TreeSimulator::Integrate(BHNode *bn, int nnodes, Particle *particles, int n
   CalculateGravity(bn, nnodes, particles, n, eps_square, theta);
   for (int i = 0; i < n; i++)
     particles[i].Correct(dt);
-  
 }
 
 void TreeSimulator::ClearAccAndPhi(Particle *parray, int n)
