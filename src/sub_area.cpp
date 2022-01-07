@@ -97,9 +97,9 @@ void SubArea::UseQueue()
     return;
   output_file.open(tmpfile_path, ios_base::app);
   while (!particle_queue.empty()) {
-    Particle p = particle_queue.front();
+    string p = particle_queue.front();
     particle_queue.pop();
-    Write(p.ToDataString());
+    Write(p);
     n++;
   }
   output_file.close();

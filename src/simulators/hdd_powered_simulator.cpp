@@ -105,14 +105,14 @@ void HDDPoweredSimulator::Step()
     {
       particles[j].Correct(dt);
       int index = GetIndex(particles[j].pos);
-      if(i == index)
-        sub_areas[i].Write(particles[j].ToDataString());
-      else
-        sub_areas[index].particle_queue.push(particles[j]);
+      output_file << particles[j].index << "," << t << "," << particles[j].pos << endl;
       ke += particles[j].CalcKineticEnergy();
       pe += particles[j].CalcPotentialEnergy();
       particles[j].Predict(dt);
-      output_file << particles[j].index << "," << t << "," << particles[j].pos << endl;
+      if (i == index)
+        sub_areas[i].Write(particles[j].ToDataString());
+      else
+        sub_areas[index].particle_queue.push(particles[j].ToDataString());
     }
     sub_areas[i].EndWrite();
   }

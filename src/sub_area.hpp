@@ -27,7 +27,7 @@ class SubArea
 public:
   static double read_time;
   static double write_time;
-  queue<Particle> particle_queue;
+  queue<string> particle_queue;
   int n;
   double theta_square;
   double eps_square;
