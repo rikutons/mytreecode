@@ -10,6 +10,7 @@ ArgumentInterpreter::ArgumentInterpreter(int argc, char* argv[])
     if (arg1 == "help" || arg1 == "-h" || arg1 == "h")
     {
       cout << "-------- help of arguments --------" << endl;
+      cout << "Execution Count:   " << "cnt (default is 1)" << endl;
       cout << "Time:              " << "t (default is 1)" << endl;
       cout << "Delta Time:        " << "dt (default is 0.01)" << endl;
       cout << "Input Filename:    " << "input_filename (default is \"\")" << endl;
@@ -36,7 +37,9 @@ ArgumentInterpreter::ArgumentInterpreter(int argc, char* argv[])
   {
     string name = argv[i];
     string data = argv[i + 1];
-    if ("t" == name)
+    if ("cnt" == name || "count" == name)
+      cnt = stoi(data);
+    else if ("t" == name)
       t = stod(data);
     else if ("dt" == name)
       dt = stod(data);
@@ -55,6 +58,7 @@ ArgumentInterpreter::ArgumentInterpreter(int argc, char* argv[])
       rsize = stod(data);
   }
   cout << "-------- initial conditions --------" << endl;
+  cout << "Execution Count:   " << cnt << endl;
   cout << "Time:              " << t << endl;
   cout << "Delta Time:        " << dt << endl;
   if(input_filename != "")

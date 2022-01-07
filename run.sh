@@ -10,7 +10,7 @@ echo "[run.sh] -------------------------------------------------------------"
 cd build
 # build/a.outとするとセグフォになるのでcd挟んでます
 # ./a.out input_filename 1000n_aligned.csv theta_square 0
-./a.out input_filename 1000n_aligned.csv
+./a.out input_filename 10000n_aligned.csv count 5
 
 echo ""
 echo "[run.sh] -------------------------------------------------------------"

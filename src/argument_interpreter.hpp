@@ -5,6 +5,7 @@ using namespace std;
 class ArgumentInterpreter
 {
 public:
+  int cnt = 1;
   double dt = 0.01;
   double t = 1;
   double eps_square = 0.1 * 0.1;

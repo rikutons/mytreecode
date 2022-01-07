@@ -17,10 +17,12 @@ class SimulatorBase
   void PrintEnergies(Particle *particles, int n);
   virtual void Step() = 0;
   void ReadParticles();
+  double true_energy = 0;
 
 protected:
   virtual void Output();
   /* data */
+  double energy;
   int n; // 粒子の総数
   double t;
   double power_index;
@@ -38,6 +40,7 @@ protected:
   ofstream status_output_file;
 
 public:
+  double error;
   SimulatorBase(ArgumentInterpreter, bool allocate_memory = true);
   void Simulate();
 };

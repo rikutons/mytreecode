@@ -1,5 +1,6 @@
 #include "common.h"
 #include "bhnode.hpp"
+int BHNode::calc_count = 0;
 
 /*
   cposから見たposのインデックスを返す関数
@@ -184,6 +185,7 @@ void BHNode::CalcGravityUsingTree(Particle &p, double eps_square, double theta_s
 
 void BHNode::AccumulateForceFromPoint(Vector3 dx, double r_square, double eps_square, Particle &particle)
 {
+  calc_count++;
   double r = sqrt(r_square + eps_square);
   particle.phi -= mass / r;
   particle.acceralation += mass * dx / powl(r, 3);

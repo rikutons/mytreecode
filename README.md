@@ -11,7 +11,7 @@ if u need help:
 ```
 
 ## input file format
-[number of particles] [radius of particles space]  
+[number of particles] [radius of particles space] [correct energy of these particles]
 [mass0] [x0] [y0] [z0]  
 [mass1] [x1] [y1] [z1]  
 .  

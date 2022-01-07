@@ -26,7 +26,7 @@ SimulatorBase::SimulatorBase(ArgumentInterpreter arguments, bool allocate_memory
   else
   {
     input_file.open("../input/" + arguments.input_filename);
-    input_file >> n >> rsize;
+    input_file >> n >> rsize >> true_energy;
     string buf;
     getline(input_file, buf); // 粒子数が書いてある行を破棄する
     cout << n << " particles" << endl;
@@ -54,6 +54,7 @@ void SimulatorBase::Simulate()
   }
   output_file.close();
   status_output_file.close();
+  error = true_energy - energy;
 }
 
 void SimulatorBase::OpenFiles(string filename) 
@@ -153,8 +154,8 @@ void SimulatorBase::PrintEnergies(Particle *particles, int n)
     ke += particles[i].CalcKineticEnergy();
     pe += particles[i].CalcPotentialEnergy();
   }
-  double total_energy = ke + pe;
-  status_output_file << "," << total_energy << endl;
+  energy = ke + pe;
+  status_output_file << "," << energy << endl;
 }
 
 void SimulatorBase::ReadParticles() 

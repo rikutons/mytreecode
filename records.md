@@ -8,6 +8,29 @@ has 2400MB/s read and 1950MB/s write.
 - wsl is wsl env and S120-256GB ssd.
 has 550MB/s read and 510MB/s write.
 
+# 1000n_aligned.csv
+## data
+- 1000 particles  
+- aligned shape(have 125 particles on each orthant)
+## records
+### tree_simulator
+#### m.2 ssd
+```
+Avarage Parameters on 5 times execution
+energy error: -3.10838e-05[J]
+simulation: 727.197[ms]
+the number of calc: 11064116
+```
+### hdd_powered_simulator 2
+#### m.2 ssd
+```
+Avarage Parameters on 5 times execution
+energy error: -0.000816572[J]
+simulation: 1536.03[ms]
+write: 159.495[ms]
+read: 426.081[ms]
+the number of calc: 8521698
+```
 # 10000n_aligned.csv
 ## data
 - 10000 particles  
@@ -16,9 +39,10 @@ has 550MB/s read and 510MB/s write.
 ### tree_simulator
 #### m.2 ssd
 ```
-Initialization End: 12.361[ms]  
-Simulation Start  
-Simulation End: 12072.3[ms]  
+Avarage Parameters on 5 times execution
+energy error: -0.000147914[J]
+simulation: 12354.4[ms]
+the number of calc: 196625975
 ```
 #### wsl
 
@@ -36,9 +60,10 @@ read: 4342.78[ms]
 ### hdd_powered_simulator 2
 #### m.2 ssd
 ```
-Initialization End: 126.726[ms]
-Simulation Start
-Simulation End: 19806.2[ms]
-write: 2493.51[ms]
-read: 4118.55[ms]
+Avarage Parameters on 5 times execution
+energy error: -0.00103647[J]
+simulation: 20242.5[ms]
+write: 2574.17[ms]
+read: 4162.48[ms]
+the number of calc: 153537668
 ```
