@@ -1,6 +1,6 @@
 ## how to run
 ```
-cmake build/ # execute only first time or when u add new source file
+mkdir build/; cd build; cmake ..; cd .. # execute only first time or when u add new source file
 ./run.sh
 ```
 and open output/dashboard.html or check raw data in output.csv.
