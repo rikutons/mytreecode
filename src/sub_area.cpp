@@ -63,7 +63,7 @@ int SubArea::MakeLET(BHNode node)
   Vector3 dx = center_pos - node.pos;
   double r_square = dx * dx;
   if ((r_square * theta_square > node.size * node.size) || (node.nparticle == 1)){
-    LET.push_back({node.mass, node.pos});
+    LET.push_back(new Particle(node.pos, node.mass));
     return 1;
   }
   for (int i = 0; i < 8; i++)
@@ -72,23 +72,13 @@ int SubArea::MakeLET(BHNode node)
   return size;
 }
 
-/*
-  小領域内の各粒子について、LETの各ノードからかかる力を計算する関数
-  計算量は LETのサイズ * 小領域の粒子数
-*/
-void SubArea::AccumulateLETGravity(Particle particles[]) 
+void SubArea::DeleteLET() 
 {
-    for (int i = 0; i < n; i++)
-    {
-      for (auto node : LET)
-      {
-          Vector3 dx = particles[i].pos - node.pos;
-          double r = sqrt(dx * dx + eps_square);
-          particles[i].phi -= node.mass / r;
-          particles[i].acceralation -= node.mass * dx / powl(r, 3);
-      }
-    }
-    LET.clear();
+  for (auto p : LET)
+  {
+    delete p;
+  }
+  LET.clear();
 }
 
 void SubArea::UseQueue() 

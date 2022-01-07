@@ -12,6 +12,7 @@ public:
   Particle *next;
   int index;
   Particle() {}
+  Particle(Vector3 pos, double mass) : pos(pos), mass(mass) {}
 
   void Predict(double dt)
   {

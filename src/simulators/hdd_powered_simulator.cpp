@@ -89,7 +89,7 @@ void HDDPoweredSimulator::Step()
   {
     int num = sub_areas[i].Read(particles);
     // cout << "SubArea " << i << " LET :";
-    nodes->AssignRoot(sub_areas[i].center_pos, rsize * 2, particles, num);
+    nodes->AssignRootWithLET(Vector3(), rsize * 2, particles, sub_areas[i].LET, num);
 
     int heap_remainder = nnodes - 1;
     BHNode *btmp = nodes + 1;
@@ -98,7 +98,7 @@ void HDDPoweredSimulator::Step()
 
     for (int j = 0; j < num; j++)
       nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
-    sub_areas[i].AccumulateLETGravity(particles);
+    sub_areas[i].DeleteLET();
 
     sub_areas[i].BeginWrite();
     for (int j = 0; j < num; j++)

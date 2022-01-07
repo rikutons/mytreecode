@@ -36,6 +36,25 @@ void BHNode::AssignRoot(Vector3 root_pos, double length, Particle *p, int np)
   p->next = NULL;
 }
 
+void BHNode::AssignRootWithLET(Vector3 root_pos, double length, Particle *p, vector<Particle*> LET, int np)
+{
+  pos = root_pos;
+  size = length;
+  pfirst = p;
+  nparticle = np + LET.size();
+  for (int i = 0; i < np - 1; i++)
+  {
+    p->next = p + 1;
+    p++;
+  }
+  for (auto particle : LET)
+  {
+    p->next = particle;
+    p = p->next;
+  }
+  p->next = NULL;
+}
+
 /*
   親ノードから再帰的に粒子を子ノードに割り当てていく関数
 */

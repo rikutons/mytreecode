@@ -8,23 +8,17 @@
 #include "bhnode.hpp"
 using namespace chrono;
 
-struct Object
-{
-  double mass;
-  Vector3 pos;
-};
-
 class SubArea
 {
   ifstream input_file;
   ofstream output_file;
   bool first_write_flag;
-  vector<Object> LET;
   system_clock::time_point start, end;
   void AddReadTime();
   void AddWriteTime();
 
 public:
+  vector<Particle*> LET;
   static double read_time;
   static double write_time;
   queue<string> particle_queue;
@@ -40,6 +34,6 @@ public:
   void EndWrite();
   int Read(Particle[]);
   int MakeLET(BHNode);
-  void AccumulateLETGravity(Particle[]);
+  void DeleteLET();
   void UseQueue();
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "vector3.hpp"
 #include "particle.hpp"
 
@@ -19,6 +20,7 @@ struct BHNode
   }
 
   void AssignRoot(Vector3, double, Particle *, int);
+  void AssignRootWithLET(Vector3, double, Particle *, vector<Particle*>, int);
   void CreateTreeRecursive(BHNode *&, int &);
   void AssignChild(int, BHNode *&, int &);
   void DumpTree(int indent = 0);
