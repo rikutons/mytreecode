@@ -4,6 +4,7 @@
 #include "simulators/tree_simulator.hpp"
 #include "simulators/simple_simulator.hpp"
 #include "simulators/hdd_powered_simulator.hpp"
+#include "simulators/hdd_async_simulator.hpp"
 #include "sub_area.hpp"
 #include "bhnode.hpp"
 
@@ -40,6 +41,9 @@ void Simulate(int mode, ArgumentInterpreter arguments)
   case 2:
     simulator = new HDDPoweredSimulator(arguments);
     break;
+  case 3:
+    simulator = new HDDAsyncSimulator(arguments);
+    break;
   default:
     break;
   }
@@ -55,7 +59,7 @@ void Simulate(int mode, ArgumentInterpreter arguments)
   cout << "energy error: " << simulator->error << "[J]" << endl;
 
   sim_time += show_time("  Simulation End", start, end);
-  if(mode == 2)
+  if(mode == 2 || mode == 3)
   {
     cout << "  write: " << SubArea::write_time << "[ms]" << endl;
     write_time += SubArea::write_time;
@@ -79,6 +83,7 @@ int main(int argc, char* argv[])
   cout << "0. Simple Simulator" << endl;
   cout << "1. Tree Simulator" << endl;
   cout << "2. HDD Powered Tree Simulator" << endl;
+  cout << "3. HDD Powered Tree Simulator(Async I/O)" << endl;
   cout << "Select Simulator: ";
   cin >> mode;
   for (int i = 0; i < arguments.cnt; i++)
@@ -90,7 +95,7 @@ int main(int argc, char* argv[])
   cout << "Avarage Parameters on " << arguments.cnt << " times execution" << endl;
   cout << "energy error: " << error / arguments.cnt << "[J]" << endl;
   cout << "simulation: " << sim_time / arguments.cnt << "[ms]" << endl;
-  if (mode == 2)
+  if (mode == 2 || mode == 3)
   {
     cout << "write: " << write_time / arguments.cnt << "[ms]" << endl;
     cout << "read: " << read_time / arguments.cnt << "[ms]" << endl;
