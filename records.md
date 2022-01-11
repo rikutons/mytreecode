@@ -41,8 +41,10 @@ the number of calc: 8521698
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.000147914[J]
-simulation: 12354.4[ms]
+simulation: 10486.5[ms]
 the number of calc: 196625975
+
+Maximum resident set size (kbytes): 418748
 ```
 #### wsl
 
@@ -62,8 +64,51 @@ read: 4342.78[ms]
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.00103647[J]
-simulation: 20242.5[ms]
-write: 2574.17[ms]
-read: 4162.48[ms]
+simulation: 17527.4[ms]
+write: 1381.61[ms]
+read: 4127.73[ms]
 the number of calc: 153537668
+
+Maximum resident set size (kbytes): 416488
+```
+
+### hdd_async_simulator
+#### m.2 ssd
+```
+Avarage Parameters on 5 times execution
+energy error: -0.00103147[J]
+simulation: 13068.9[ms]
+write: 1198.21[ms]
+read: 4636.39[ms]
+the number of calc: 152875661
+
+Maximum resident set size (kbytes): 416260
+```
+
+# 100000n_aligned.csv
+## data
+- 100000 particles  
+- aligned shape(have 12500 particles on each orthant)
+## records
+### tree_simulator
+#### m.2 ssd
+```
+Avarage Parameters on 1 times execution
+energy error: 0.462245[J]
+simulation: 143865[ms]
+the number of calc: -1403729948
+
+Maximum resident set size (kbytes): 3260588
+```
+
+### hdd_async_simulator
+#### m.2 ssd
+```
+energy error: -0.000949004[J]
+simulation: 155343[ms]
+write: 11364.5[ms]
+read: 43857.4[ms]
+the number of calc: -1938727002
+
+Maximum resident set size (kbytes): 3239512
 ```

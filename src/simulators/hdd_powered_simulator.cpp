@@ -21,10 +21,10 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
     sub_areas[i].BeginWrite();
   }
 
-  nnodes = n / div_num * 2 + 100;
+  nnodes = n / div_num * 2 + n / 100;
   nodes = new BHNode[nnodes];
-  particle_maxnum = n / div_num + 100;
-  particles = new Particle[particle_maxnum]; // !注意! 粒子の交換に対して100粒子分しか余裕を持たせていません
+  particle_maxnum = n / div_num + n / 100;
+  particles = new Particle[particle_maxnum]; // !注意! 粒子の交換に対してn / 100粒子分しか余裕を持たせていません
 
   for (int i = 0; i < n; i++)
   {
