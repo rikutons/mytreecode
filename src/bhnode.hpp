@@ -12,7 +12,7 @@ struct BHNode
   int nparticle;
   Vector3 pos; // 重心の位置
   double mass;
-  static int calc_count;
+  static long long int calc_count;
   BHNode()
   {
     for (int i = 0; i < 8; i++)

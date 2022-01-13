@@ -10,7 +10,12 @@ echo "[run.sh] -------------------------------------------------------------"
 cd build
 # build/a.outとするとセグフォになるのでcd挟んでます
 # ./a.out input_filename 1000n_aligned.csv theta_square 0
-./a.out input_filename 10000n_aligned.csv count 5
+/usr/bin/time -v ./a.out input_filename 10000n_aligned.csv count 5 <./1 > 100001s 2>100001e
+/usr/bin/time -v ./a.out input_filename 10000n_aligned.csv count 5 <./2 > 100002s 2>100002e
+/usr/bin/time -v ./a.out input_filename 10000n_aligned.csv count 5 <./3 > 100003s 2>100003e
+/usr/bin/time -v ./a.out input_filename 100000n_aligned.csv count 5 <./1 > 1000001s 2>1000001e
+/usr/bin/time -v ./a.out input_filename 100000n_aligned.csv count 5 <./2 > 1000002s 2>1000002e
+/usr/bin/time -v ./a.out input_filename 100000n_aligned.csv count 5 <./3 > 1000003s 2>1000003e
 
 echo ""
 echo "[run.sh] -------------------------------------------------------------"

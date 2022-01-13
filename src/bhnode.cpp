@@ -1,6 +1,6 @@
 #include "common.h"
 #include "bhnode.hpp"
-int BHNode::calc_count = 0;
+long long int BHNode::calc_count = 0;
 
 /*
   cposから見たposのインデックスを返す関数
