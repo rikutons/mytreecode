@@ -36,6 +36,14 @@ the number of calc: 8521698
 - 10000 particles  
 - aligned shape(have 1250 particles on each orthant)
 ## records
+### simple_simulator
+#### wsl
+```
+energy error: 0[J]
+Simulation End: 2.63379e+07[ms] # 7hours 19minutes
+
+Maximum resident set size (kbytes): 44740
+```
 ### tree_simulator
 #### wsl
 ```
@@ -124,7 +132,7 @@ Maximum resident set size (kbytes): 416260
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -1.39812e-05[J]
+energy error: -0.000167718[J]
 simulation: 148881[ms]
 the number of calc: 2891224588
 
@@ -145,7 +153,7 @@ Maximum resident set size (kbytes): 3260588
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -0.0009542[J]
+energy error: -0.00110794[J]
 simulation: 217788[ms]
 write: 11743.6[ms]
 read: 46465.9[ms]
@@ -158,7 +166,7 @@ Maximum resident set size (kbytes): 29768
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -0.000949004[J]
+energy error: -0.00110274[J]
 simulation: 158124[ms]
 write: 12165.7[ms]
 read: 44675.3[ms]
