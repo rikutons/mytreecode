@@ -62,7 +62,7 @@ void TreeSimulator::CalculateGravity(BHNode *bn, int nnodes, Particle *particles
   bn->CalcPhysicalQuantity();
   ClearAccAndPhi(particles, n);
 
-  #pragma omp for schedule(dynamic)
+  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++)
     bn->CalcGravityUsingTree(particles[i], eps_square, theta);
     //	PR(i); PR(p->pos);PR(p->phi); PRL(p->acc);
