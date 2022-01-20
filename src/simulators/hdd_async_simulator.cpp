@@ -1,4 +1,3 @@
-#include <thread>
 #include "hdd_async_simulator.hpp"
 
 HDDAsyncSimulator::HDDAsyncSimulator(ArgumentInterpreter arguments) :
@@ -63,61 +62,64 @@ void HDDAsyncSimulator::Step()
   sub_areas[0].Read(particles);
   for (int i = 0; i < div_num; i++)
   {
-    thread th(
-      [=](){
+    #pragma omp parallel
+    {
+      #pragma omp single nowait
+      {
         this->sub_areas[(i + 1) % this->div_num].Read(this->next_particles);
       }
-    );
-    // cout << "SubArea " << i << " have " << sub_areas[i].n << " particles  |  ";
-    nodes->AssignRoot(Vector3(), rsize * 2, particles, sub_areas[i].n);
+      #pragma omp single
+      {
+        nodes->AssignRoot(Vector3(), rsize * 2, particles, sub_areas[i].n);
 
-    int heap_remainder = nnodes - 1;
-    BHNode *btmp = nodes + 1;
-    nodes->CreateTreeRecursive(btmp, heap_remainder);
-    nodes->CalcPhysicalQuantity();
-
-    // cout << "LET Size: [";
-    #pragma omp parallel for
-    for (int j = 0; j < div_num; j++)
-    {
-      if(i != j)
-        sub_areas[j].MakeLET(nodes[0]);
-      // if(i != j)
-      //   cout << sub_areas[j].MakeLET(nodes[0]);
-      // else
-      //   cout << "-";
-      // if(j != div_num - 1)
-      //   cout << ", ";
+        int heap_remainder = nnodes - 1;
+        BHNode *btmp = nodes + 1;
+        nodes->CreateTreeRecursive(btmp, heap_remainder);
+        nodes->CalcPhysicalQuantity();
+      }
+      #pragma omp for schedule(dynamic)
+      for (int j = 0; j < div_num; j++)
+      {
+        if(i != j)
+          sub_areas[j].MakeLET(nodes[0]);
+        // if(i != j)
+        //   cout << sub_areas[j].MakeLET(nodes[0]);
+        // else
+        //   cout << "-";
+        // if(j != div_num - 1)
+        //   cout << ", ";
+      }
+      // cout << "]" << endl;
     }
-    // cout << "]" << endl;
-    th.join();
     SwapParticles(&particles, &next_particles);
   }
 
   // cout << "Phase 2: Calc Pos" << endl;
   for (int i = 0; i < div_num; i++)
   {
-    thread th(
-      [=](){
+    #pragma omp parallel
+    {
+      #pragma omp single nowait
+      {
         if(i != 0)
           Write(i - 1);
         if(i != div_num - 1)
           sub_areas[i + 1].Read(next_particles);
       }
-    );
-    // cout << "SubArea " << i << " LET :";
-    nodes->AssignRootWithLET(Vector3(), rsize * 2, particles, sub_areas[i].LET, sub_areas[i].n);
+      #pragma omp single
+      {
+        nodes->AssignRootWithLET(Vector3(), rsize * 2, particles, sub_areas[i].LET, sub_areas[i].n);
 
-    int heap_remainder = nnodes - 1;
-    BHNode *btmp = nodes + 1;
-    nodes->CreateTreeRecursive(btmp, heap_remainder);
-    nodes->CalcPhysicalQuantity();
-
-    #pragma omp parallel for
-    for (int j = 0; j < sub_areas[i].n; j++)
-      nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
+        int heap_remainder = nnodes - 1;
+        BHNode *btmp = nodes + 1;
+        nodes->CreateTreeRecursive(btmp, heap_remainder);
+        nodes->CalcPhysicalQuantity();
+      }
+      #pragma omp for schedule(dynamic)
+      for (int j = 0; j < sub_areas[i].n; j++)
+        nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
+    }
     sub_areas[i].DeleteLET();
-    th.join();
 
     for (int j = 0; j < sub_areas[i].n; j++)
     {
@@ -131,6 +133,7 @@ void HDDAsyncSimulator::Step()
   }
   Write(div_num - 1);
 
+  #pragma omp parallel for
   for (int i = 0; i < div_num; i++)
   {
     sub_areas[i].UseQueue();

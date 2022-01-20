@@ -41,7 +41,7 @@ the number of calc: 8521698
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.000409108[J]
-simulation: 11008.1[ms]
+simulation: 11170.9[ms]
 the number of calc: 196625975
 
 Maximum resident set size (kbytes): 23532
@@ -72,12 +72,12 @@ read: 4342.78[ms]
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.00129775[J]
-simulation: 9857.06[ms]
-write: 255.718[ms]
-read: 64.3382[ms]
-the number of calc: 153532698
+simulation: 7540.85[ms]
+write: 429.026[ms]
+read: 80.2758[ms]
+the number of calc: 27104956
 
-Maximum resident set size (kbytes): 7200
+Maximum resident set size (kbytes): 7408
 ```
 #### m.2 ssd
 ```
@@ -96,12 +96,12 @@ Maximum resident set size (kbytes): 416488
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.00129269[J]
-simulation: 7353.13[ms]
-write: 1220.29[ms]
-read: 88.388[ms]
-the number of calc: 35595177
+simulation: 7777.39[ms]
+write: 590.653[ms]
+read: 105.014[ms]
+the number of calc: 26586772
 
-Maximum resident set size (kbytes): 10196
+Maximum resident set size (kbytes): 7996
 ```
 #### m.2 ssd
 ```
@@ -133,10 +133,10 @@ Maximum resident set size (kbytes): 44740
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.000535112[J]
-simulation: 148832[ms]
+simulation: 150878[ms]
 the number of calc: 2891224588
 
-Maximum resident set size (kbytes): 195788
+Maximum resident set size (kbytes): 195812
 ```
 
 #### m.2 ssd
@@ -154,12 +154,12 @@ Maximum resident set size (kbytes): 3260588
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.00147517[J]
-simulation: 137623[ms]
-write: 1256.2[ms]
-read: 640.89[ms]
-the number of calc: 2401549820
+simulation: 82710.1[ms]
+write: 1903.59[ms]
+read: 790.759[ms]
+the number of calc: 420161617
 
-Maximum resident set size (kbytes): 29824
+Maximum resident set size (kbytes): 30644
 ```
 
 ### hdd_async_simulator
@@ -167,12 +167,12 @@ Maximum resident set size (kbytes): 29824
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.00147[J]
-simulation: 73988[ms]
-write: 5201.4[ms]
-read: 908.35[ms]
-the number of calc: 417630435
+simulation: 80601.8[ms]
+write: 3481.92[ms]
+read: 947.249[ms]
+the number of calc: 408345200
 
-Maximum resident set size (kbytes): 38952
+Maximum resident set size (kbytes): 36844
 ```
 #### m.2 ssd
 ```

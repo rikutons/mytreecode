@@ -70,7 +70,7 @@ void HDDPoweredSimulator::Step()
     nodes->CreateTreeRecursive(btmp, heap_remainder);
     nodes->CalcPhysicalQuantity();
 
-    // cout << "LET Size: [";
+    #pragma omp parallel for schedule(dynamic)
     for (int j = 0; j < div_num; j++)
     {
       if(i != j)
@@ -97,6 +97,7 @@ void HDDPoweredSimulator::Step()
     nodes->CreateTreeRecursive(btmp, heap_remainder);
     nodes->CalcPhysicalQuantity();
 
+    #pragma omp parallel for schedule(dynamic)
     for (int j = 0; j < num; j++)
       nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
     sub_areas[i].DeleteLET();
@@ -118,6 +119,7 @@ void HDDPoweredSimulator::Step()
     sub_areas[i].EndWrite();
   }
 
+  #pragma omp parallel for
   for (int i = 0; i < div_num; i++)
   {
     sub_areas[i].UseQueue();

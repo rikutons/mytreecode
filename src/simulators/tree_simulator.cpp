@@ -7,9 +7,11 @@ void TreeSimulator::Step()
 
 void TreeSimulator::Integrate(BHNode *bn, int nnodes, Particle *particles, int n, double eps_square, double theta, double dt) 
 {
+  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++)
     particles[i].Predict(dt);
   CalculateGravity(bn, nnodes, particles, n, eps_square, theta);
+  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++)
     particles[i].Correct(dt);
 }
@@ -60,6 +62,7 @@ void TreeSimulator::CalculateGravity(BHNode *bn, int nnodes, Particle *particles
   bn->CalcPhysicalQuantity();
   ClearAccAndPhi(particles, n);
 
+  #pragma omp for schedule(dynamic)
   for (int i = 0; i < n; i++)
     bn->CalcGravityUsingTree(particles[i], eps_square, theta);
     //	PR(i); PR(p->pos);PR(p->phi); PRL(p->acc);
