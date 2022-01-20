@@ -28,12 +28,12 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
 
   for (int i = 0; i < n; i++)
   {
-    double mass;
-    Vector3 pos;
-    input_file >> mass >> pos[0] >> pos[1] >> pos[2];
-    int index = GetIndex(pos);
+    Particle p;
+    input_file >> p.mass >> p.pos[0] >> p.pos[1] >> p.pos[2];
+    p.index = i;
+    int area_index = GetIndex(p.pos);
     // cout << "i: " << i << ", mass: " << mass << ", pos: " << pos << ", index: " << index << endl;
-    sub_areas[index].Write(to_string(i) + " " + to_string(mass) + " " + to_string(pos) + " 0 0 0 0 0 0"); // 速度と加速度の初期値(0, 0, 0)を書き込んでおく
+    sub_areas[area_index].Write(p); // 速度と加速度の初期値(0, 0, 0)を書き込んでおく
   }
   for (int i = 0; i < div_num; i++)
     sub_areas[i].EndWrite();
@@ -45,7 +45,8 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
     for (int j = 0; j < num; j++)
     {
       particles[j].Predict(dt);
-      sub_areas[i].Write(particles[j].ToDataString());
+      sub_areas[i].Write(particles[j]);
+      // sub_areas[i].Write(particles[j].ToDataString());
     }
     sub_areas[i].EndWrite();
   }
@@ -110,9 +111,9 @@ void HDDPoweredSimulator::Step()
       pe += particles[j].CalcPotentialEnergy();
       particles[j].Predict(dt);
       if (i == index)
-        sub_areas[i].Write(particles[j].ToDataString());
+        sub_areas[i].Write(particles[j]);
       else
-        sub_areas[index].particle_queue.push(particles[j].ToDataString());
+        sub_areas[index].particle_queue.push(particles[j]);
     }
     sub_areas[i].EndWrite();
   }

@@ -6,24 +6,16 @@ double SubArea::write_time = 0;
 void SubArea::BeginWrite() 
 {
   start = system_clock::now();
-  output_file.open(tmpfile_path);
+  output_file.open(tmpfile_path, ios::binary);
   first_write_flag = true;  // 最終行が空行になってしまう現象をフラグを用いて回避する
   end = system_clock::now();
   AddWriteTime();
 }
 
-void SubArea::Write(string s) 
+void SubArea::Write(Particle particle) 
 {
   start = system_clock::now();
-  if (first_write_flag)
-  {
-    output_file << s;
-    first_write_flag = false;
-  }
-  else
-  {
-    output_file << endl << s;
-  }
+  output_file.write((char*)&particle, sizeof(Particle));
   end = system_clock::now();
   AddWriteTime();
 }
@@ -44,17 +36,18 @@ int SubArea::Read(Particle particles[])
 {
   start = system_clock::now();
   int i = 0;
-  input_file.open(tmpfile_path);
-  while(!input_file.eof())
+  input_file.open(tmpfile_path, ios::binary);
+  do
   {
-    input_file >> particles[i].index >> particles[i].mass >> particles[i].pos.x >> particles[i].pos.y >> particles[i].pos.z >> particles[i].velocity.x >> particles[i].velocity.y >> particles[i].velocity.z >> particles[i].acceralation.x >> particles[i].acceralation.y >> particles[i].acceralation.z;
+    // input_file >> particles[i].index >> particles[i].mass >> particles[i].pos.x >> particles[i].pos.y >> particles[i].pos.z >> particles[i].velocity.x >> particles[i].velocity.y >> particles[i].velocity.z >> particles[i].acceralation.x >> particles[i].acceralation.y >> particles[i].acceralation.z;
+    input_file.read((char *)&particles[i], sizeof(Particle));
     particles[i].phi = 0;
     i++;
-  }
+  } while(!input_file.eof());
   input_file.close();
   end = system_clock::now();
   AddReadTime();
-  return n = i;
+  return n = i - 1; // 最後に不要な空のパーティクルを1つ読んでしまうので無くす
 }
 
 int SubArea::MakeLET(BHNode node) 
@@ -85,9 +78,9 @@ void SubArea::UseQueue()
 {
   if(particle_queue.empty())
     return;
-  output_file.open(tmpfile_path, ios_base::app);
+  output_file.open(tmpfile_path, ios_base::app | ios_base::binary);
   while (!particle_queue.empty()) {
-    string p = particle_queue.front();
+    Particle p = particle_queue.front();
     particle_queue.pop();
     Write(p);
     n++;

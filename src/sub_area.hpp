@@ -21,7 +21,7 @@ public:
   vector<Particle*> LET;
   static double read_time;
   static double write_time;
-  queue<string> particle_queue;
+  queue<Particle> particle_queue;
   int n;
   double theta_square;
   double eps_square;
@@ -30,7 +30,7 @@ public:
   Vector3 center_pos;
 
   void BeginWrite();
-  void Write(string s);
+  void Write(Particle);
   void EndWrite();
   int Read(Particle[]);
   int MakeLET(BHNode);
