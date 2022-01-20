@@ -113,6 +113,7 @@ void HDDAsyncSimulator::Step()
     nodes->CreateTreeRecursive(btmp, heap_remainder);
     nodes->CalcPhysicalQuantity();
 
+    #pragma omp parallel for
     for (int j = 0; j < sub_areas[i].n; j++)
       nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
     sub_areas[i].DeleteLET();

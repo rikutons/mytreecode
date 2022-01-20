@@ -40,11 +40,11 @@ the number of calc: 8521698
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -0.000147914[J]
-simulation: 11855.4[ms]
+energy error: -0.000409108[J]
+simulation: 11008.1[ms]
 the number of calc: 196625975
 
-Maximum resident set size (kbytes): 23484
+Maximum resident set size (kbytes): 23532
 ```
 
 #### m.2 ssd
@@ -71,13 +71,13 @@ read: 4342.78[ms]
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -0.00103647[J]
-simulation: 18503.7[ms]
-write: 1479.67[ms]
-read: 4327.25[ms]
-the number of calc: 153537668
+energy error: -0.00129775[J]
+simulation: 9857.06[ms]
+write: 255.718[ms]
+read: 64.3382[ms]
+the number of calc: 153532698
 
-Maximum resident set size (kbytes): 6932
+Maximum resident set size (kbytes): 7200
 ```
 #### m.2 ssd
 ```
@@ -95,13 +95,13 @@ Maximum resident set size (kbytes): 416488
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -0.00103147[J]
-simulation: 14169.1[ms]
-write: 1509.46[ms]
-read: 5621.69[ms]
-the number of calc: 152875661
+energy error: -0.00129269[J]
+simulation: 7353.13[ms]
+write: 1220.29[ms]
+read: 88.388[ms]
+the number of calc: 35595177
 
-Maximum resident set size (kbytes): 11268
+Maximum resident set size (kbytes): 10196
 ```
 #### m.2 ssd
 ```
@@ -132,11 +132,11 @@ Maximum resident set size (kbytes): 44740
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -0.000167718[J]
-simulation: 148881[ms]
+energy error: -0.000535112[J]
+simulation: 148832[ms]
 the number of calc: 2891224588
 
-Maximum resident set size (kbytes): 195680
+Maximum resident set size (kbytes): 195788
 ```
 
 #### m.2 ssd
@@ -153,26 +153,26 @@ Maximum resident set size (kbytes): 3260588
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -0.00110794[J]
-simulation: 217788[ms]
-write: 11743.6[ms]
-read: 46465.9[ms]
-the number of calc: 2401510247
+energy error: -0.00147517[J]
+simulation: 137623[ms]
+write: 1256.2[ms]
+read: 640.89[ms]
+the number of calc: 2401549820
 
-Maximum resident set size (kbytes): 29768
+Maximum resident set size (kbytes): 29824
 ```
 
 ### hdd_async_simulator
 #### wsl
 ```
 Avarage Parameters on 5 times execution
-energy error: -0.00110274[J]
-simulation: 158124[ms]
-write: 12165.7[ms]
-read: 44675.3[ms]
-the number of calc: 2356240294
+energy error: -0.00147[J]
+simulation: 73988[ms]
+write: 5201.4[ms]
+read: 908.35[ms]
+the number of calc: 417630435
 
-Maximum resident set size (kbytes): 38720
+Maximum resident set size (kbytes): 38952
 ```
 #### m.2 ssd
 ```

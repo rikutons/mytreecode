@@ -1,4 +1,5 @@
 #include <random>
+#include <iomanip>
 #include "../common.h"
 #include "simulator_base.hpp"
 
@@ -63,7 +64,7 @@ void SimulatorBase::OpenFiles(string filename)
   output_file << "id,t,x,y,z" << endl;
 
   status_output_file.open("../output/status_" + filename, ios::out);
-  status_output_file << "t,m_x,m_y,m_z,m_vx,m_vy,m_vz,total_energy" << endl;
+  status_output_file << fixed << setprecision(20) << "t,m_x,m_y,m_z,m_vx,m_vy,m_vz,total_energy" << endl;
 }
 
 void SimulatorBase::InitParticlesOnSphereShape() 
