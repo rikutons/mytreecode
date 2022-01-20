@@ -41,10 +41,10 @@ the number of calc: 8521698
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.000409108[J]
-simulation: 11170.9[ms]
-the number of calc: 196625975
+simulation: 6545.41[ms]
+the number of calc: 33878587
 
-Maximum resident set size (kbytes): 23532
+Maximum resident set size (kbytes): 23540
 ```
 
 #### m.2 ssd
@@ -133,10 +133,10 @@ Maximum resident set size (kbytes): 44740
 ```
 Avarage Parameters on 5 times execution
 energy error: -0.000535112[J]
-simulation: 150878[ms]
-the number of calc: 2891224588
+simulation: 82442.7[ms]
+the number of calc: 499440864
 
-Maximum resident set size (kbytes): 195812
+Maximum resident set size (kbytes): 195892
 ```
 
 #### m.2 ssd
