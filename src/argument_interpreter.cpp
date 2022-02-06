@@ -22,6 +22,7 @@ ArgumentInterpreter::ArgumentInterpreter(int argc, char* argv[])
       cout << " Ignored if input filename is not \"\"." << endl;
       cout << "Softening ^ 2:     " << "eps_square (defalut is 0.1 ^ 2)" << endl;
       cout << "Theta ^ 2:         " << "theta_square (default is 0.5)" << endl;
+      cout << "Simulator Mode:    " << "simulator_mode (defalut is cin input)" << endl;
       cout << "[Example] ./a.out t 2 dt 0.01 n 10000 rsize 10 output_filename output.csv" << endl;
       cout << "------------------------------------" << endl;
       exit(0);
@@ -51,6 +52,8 @@ ArgumentInterpreter::ArgumentInterpreter(int argc, char* argv[])
       eps_square = stod(data);
     else if ("theta_square" == name)
       theta_square = stod(data);
+    else if ("simulator_mode" == name)
+      simulator_mode = stoi(data);
   // 以下はinputfileが決まっている場合無効となる
     else if ("n" == name)
       n = stoi(data);
@@ -71,5 +74,6 @@ ArgumentInterpreter::ArgumentInterpreter(int argc, char* argv[])
   cout << "Output Filename:   " << output_filename << endl;
   cout << "Softening ^ 2:     " << eps_square << endl;
   cout << "Theta ^ 2:         " << theta_square << endl;
+  cout << "Simulator Mode:    " << simulator_mode << endl;
   cout << "------------------------------------" << endl;
 }

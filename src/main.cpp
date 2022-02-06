@@ -79,13 +79,16 @@ int main(int argc, char* argv[])
 
   ArgumentInterpreter arguments(argc, argv);
 
-  int mode;
+  int mode = arguments.simulator_mode;
   cout << "0. Simple Simulator" << endl;
   cout << "1. Tree Simulator" << endl;
   cout << "2. HDD Powered Tree Simulator" << endl;
   cout << "3. HDD Powered Tree Simulator(Async I/O)" << endl;
   cout << "Select Simulator: ";
-  cin >> mode;
+  if(mode == -1) {
+    cin >> mode;
+  }
+  cout << mode << " was selected." << endl;
   for (int i = 0; i < arguments.cnt; i++)
   {
     cout << endl << "Start task " << i + 1 << endl;

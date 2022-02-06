@@ -10,6 +10,7 @@ public:
   double t = 1;
   double eps_square = 0.1 * 0.1;
   double theta_square = 0.5; // [rad^2]
+  int simulator_mode = -1;
   string input_filename = "";
   string output_filename = "output.csv";
   // 以下はinputfileが決まっている場合無効となる
