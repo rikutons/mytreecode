@@ -1,0 +1,12 @@
+CPU内に「ノースブリッジ」
+やりとりがページ単位
+
+fincore 10000n_aligned.csv0.tmp
+メモリに残ってる量がわかる
+
+100万粒子でうごかしてメモリに残ってないかどうかを調べる
+
+cd build
+./a.out # Ctrl + Zでとめる
+fg 1
+fincore ../input/100000n_aligned.csv*
