@@ -23,6 +23,7 @@ public:
   static double write_time;
   queue<Particle> particle_queue;
   int n;
+  double size;
   double theta_square;
   double eps_square;
   string tmpfile_path;

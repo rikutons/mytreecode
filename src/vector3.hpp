@@ -58,6 +58,10 @@ struct Vector3
   {
     return sqrt(x * x + y * y + z * z);
   }
+  double max()
+  {
+    return std::max(std::max(x, y), z);
+  }
 };
 
 ostream &operator<<(ostream &, const Vector3);

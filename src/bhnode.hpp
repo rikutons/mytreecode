@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <deque>
 #include "vector3.hpp"
 #include "particle.hpp"
 
@@ -29,4 +30,5 @@ struct BHNode
   void CalcGravityUsingTree(Particle &, double, double);
   void AccumulateForceFromPoint(Vector3, double, double, Particle &);
   void AccumulateForceFromTree(Particle &, double, double);
+  deque<BHNode*> MakeLET(Vector3, double, double);
 };

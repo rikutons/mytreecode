@@ -1,4 +1,5 @@
 #include "hdd_async_simulator.hpp"
+#include "../common.h"
 
 HDDAsyncSimulator::HDDAsyncSimulator(ArgumentInterpreter arguments) :
   SimulatorBase(arguments, false),
@@ -13,6 +14,7 @@ HDDAsyncSimulator::HDDAsyncSimulator(ArgumentInterpreter arguments) :
     sub_areas[i].tmpfile_path = "../input/" + arguments.input_filename + to_string(i) + ".tmp";
     // 小領域が8個であるとき限定の処理
     sub_areas[i].center_pos = rsize / 2 * Vector3(1, 1, 1);
+    sub_areas[i].size = rsize;
     for (int j = 0; j < 3; j++)
       if(i & (1 << j))
         sub_areas[i].center_pos[j] *= -1;
@@ -21,9 +23,9 @@ HDDAsyncSimulator::HDDAsyncSimulator(ArgumentInterpreter arguments) :
     sub_areas[i].BeginWrite();
   }
 
-  nnodes = n / div_num * 2 + n / 100;
+  nnodes = n / div_num * 2 + n / 10;
   nodes = new BHNode[nnodes];
-  particle_maxnum = n / div_num + n / 100;
+  particle_maxnum = n / div_num + n / 10;
   particles = new Particle[particle_maxnum]; // !注意! 粒子の交換に対してn / 100粒子分しか余裕を持たせていません
   next_particles = new Particle[particle_maxnum];
 
@@ -97,6 +99,7 @@ void HDDAsyncSimulator::Step()
   // cout << "Phase 2: Calc Pos" << endl;
   for (int i = 0; i < div_num; i++)
   {
+    vector<Particle*> groupArrays[GROUP_NUM];
     #pragma omp parallel
     {
       #pragma omp single nowait
@@ -114,10 +117,24 @@ void HDDAsyncSimulator::Step()
         BHNode *btmp = nodes + 1;
         nodes->CreateTreeRecursive(btmp, heap_remainder);
         nodes->CalcPhysicalQuantity();
+        for (int j = 0; j < sub_areas[i].n; j++)
+        {
+          particles[j].acceralation = Vector3();
+          particles[j].phi = particles[j].mass / sqrt(eps_square);
+          groupArrays[particles[j].CalcGroupIndex(sub_areas[i].center_pos, sub_areas[i].size)].emplace_back(&particles[j]);
+        }
       }
       #pragma omp for schedule(dynamic)
-      for (int j = 0; j < sub_areas[i].n; j++)
-        nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
+      for (int j = 0; j < GROUP_NUM; j++)
+      {
+        auto LET = nodes[0].MakeLET(Particle::CalcGroupCenter(j, sub_areas[i].size) + sub_areas[i].center_pos, eps_square, theta_square);
+        for (auto p : groupArrays[j])
+          for (auto node : LET)
+          {
+            Vector3 dx = node->pos - p->pos;
+            node->AccumulateForceFromPoint(dx, dx * dx, eps_square, *p);
+          }
+      }
     }
     sub_areas[i].DeleteLET();
 
@@ -128,6 +145,16 @@ void HDDAsyncSimulator::Step()
       ke += particles[j].CalcKineticEnergy();
       pe += particles[j].CalcPotentialEnergy();
       particles[j].Predict(dt);
+      double max = abs(particles[j].pos.max());
+      if(max > rsize)
+      {
+        for (int k = 0; k < div_num; k++)
+        {
+          sub_areas[k].size = max;
+          sub_areas[k].center_pos *= (max / rsize);
+        }
+        rsize = max;
+      }
     }
     SwapParticles(&particles, &next_particles);
   }

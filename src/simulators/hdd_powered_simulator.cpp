@@ -1,4 +1,5 @@
 #include "hdd_powered_simulator.hpp"
+#include "../common.h"
 
 HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
   SimulatorBase(arguments, false),
@@ -13,6 +14,7 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
     sub_areas[i].tmpfile_path = "../input/" + arguments.input_filename + to_string(i) + ".tmp";
     // 小領域が8個であるとき限定の処理
     sub_areas[i].center_pos = rsize / 2 * Vector3(1, 1, 1);
+    sub_areas[i].size = rsize;
     for (int j = 0; j < 3; j++)
       if(i & (1 << j))
         sub_areas[i].center_pos[j] *= -1;
@@ -21,9 +23,9 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
     sub_areas[i].BeginWrite();
   }
 
-  nnodes = n / div_num * 2 + n / 100;
+  nnodes = n / div_num * 2 + n / 10;
   nodes = new BHNode[nnodes];
-  particle_maxnum = n / div_num + n / 100;
+  particle_maxnum = n / div_num + n / 10;
   particles = new Particle[particle_maxnum]; // !注意! 粒子の交換に対してn / 100粒子分しか余裕を持たせていません
 
   for (int i = 0; i < n; i++)
@@ -97,13 +99,29 @@ void HDDPoweredSimulator::Step()
     nodes->CreateTreeRecursive(btmp, heap_remainder);
     nodes->CalcPhysicalQuantity();
 
+    vector<Particle*> groupArrays[GROUP_NUM];
+    for (int j = 0; j < sub_areas[i].n; j++)
+    {
+      particles[j].acceralation = Vector3();
+      particles[j].phi = particles[j].mass / sqrt(eps_square);
+      groupArrays[particles[j].CalcGroupIndex(sub_areas[i].center_pos, sub_areas[i].size)].emplace_back(&particles[j]);
+    }
     #pragma omp parallel for schedule(dynamic)
-    for (int j = 0; j < num; j++)
-      nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
+    for (int j = 0; j < GROUP_NUM; j++)
+    {
+      auto LET = nodes[0].MakeLET(Particle::CalcGroupCenter(j, sub_areas[i].size) + sub_areas[i].center_pos, eps_square, theta_square);
+      for (auto p : groupArrays[j])
+        for (auto node : LET)
+        {
+          Vector3 dx = node->pos - p->pos;
+          node->AccumulateForceFromPoint(dx, dx * dx, eps_square, *p);
+        }
+    }
     sub_areas[i].DeleteLET();
 
+
     sub_areas[i].BeginWrite();
-    for (int j = 0; j < num; j++)
+    for (int j = 0; j < sub_areas[i].n; j++)
     {
       particles[j].Correct(dt);
       int index = GetIndex(particles[j].pos);
@@ -115,6 +133,16 @@ void HDDPoweredSimulator::Step()
         sub_areas[i].Write(particles[j]);
       else
         sub_areas[index].particle_queue.push(particles[j]);
+      double max = abs(particles[j].pos.max());
+      if(max > rsize)
+      {
+        for (int k = 0; k < div_num; k++)
+        {
+          sub_areas[k].size = max;
+          sub_areas[k].center_pos *= (max / rsize);
+        }
+        rsize = max;
+      }
     }
     sub_areas[i].EndWrite();
   }

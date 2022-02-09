@@ -168,5 +168,6 @@ void SimulatorBase::ReadParticles()
     input_file >> mass >> pos[0] >> pos[1] >> pos[2];
     particles[i].mass = mass;
     particles[i].pos = pos;
+    particles[i].index = i;
   }
 }

@@ -2,11 +2,12 @@
 
 class TreeSimulator : public SimulatorBase
 {
+  int maxDepth = 5;
   void Step();
-  void Integrate(BHNode *bn, int nnodes, Particle *particles, int n, double eps_square, double theta, double dt);
-  void CalculateGravity(BHNode *bn, int nnodes, Particle *particles, int n, double eps_square, double theta);
-  double CalculateSize(Particle *p, int n);
-  void ClearAccAndPhi(Particle *parray, int n);
+  void CalculateGravity();
+  double CalculateSize();
+  void ClearAccAndPhi();
+
 public:
   TreeSimulator(ArgumentInterpreter arguments);
 };

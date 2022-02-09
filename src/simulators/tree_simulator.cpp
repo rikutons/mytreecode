@@ -1,31 +1,7 @@
+#include <vector>
+#include <bitset>
 #include "tree_simulator.hpp"
-
-void TreeSimulator::Step() 
-{
-  Integrate(nodes, nnodes, particles, n, eps_square, theta_square, dt);
-}
-
-void TreeSimulator::Integrate(BHNode *bn, int nnodes, Particle *particles, int n, double eps_square, double theta, double dt) 
-{
-  #pragma omp parallel for schedule(dynamic)
-  for (int i = 0; i < n; i++)
-    particles[i].Predict(dt);
-  CalculateGravity(bn, nnodes, particles, n, eps_square, theta);
-  #pragma omp parallel for schedule(dynamic)
-  for (int i = 0; i < n; i++)
-    particles[i].Correct(dt);
-}
-
-void TreeSimulator::ClearAccAndPhi(Particle *parray, int n)
-{
-  Particle *p = parray;
-  for (int i = 0; i < n; i++)
-  {
-    p->acceralation = Vector3();
-    p->phi = 0;
-    p++;
-  }
-}
+#include "../common.h"
 
 TreeSimulator::TreeSimulator(ArgumentInterpreter arguments) : SimulatorBase(arguments)
 {
@@ -33,16 +9,39 @@ TreeSimulator::TreeSimulator(ArgumentInterpreter arguments) : SimulatorBase(argu
   nodes = new BHNode[nnodes];
 }
 
+void TreeSimulator::Step() 
+{
+  #pragma omp parallel for schedule(dynamic)
+  for (int i = 0; i < n; i++)
+    particles[i].Predict(dt);
+  CalculateGravity();
+  #pragma omp parallel for schedule(dynamic)
+  for (int i = 0; i < n; i++)
+    particles[i].Correct(dt);
+}
+
+void TreeSimulator::ClearAccAndPhi()
+{
+  Particle *p = particles;
+#pragma omp parallel for schedule(dynamic)
+  for (int i = 0; i < n; i++)
+  {
+    particles[i].acceralation = Vector3();
+    particles[i].phi = 0;
+  }
+}
+
 /*
   最も外側にある粒子を内包するような最小の立方体の大きさ( ÷ 2)を返す。
   2の整数乗の値のみを持つ。
 */
-double TreeSimulator::CalculateSize(Particle *p, int n)
+double TreeSimulator::CalculateSize()
 {
   double rsize = 1;
+#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++)
   {
-    Vector3 ppos = p[i].pos;
+    Vector3 ppos = particles[i].pos;
     for (int k = 0; k < 3; k++)
       if (fabs(ppos[k]) > rsize)
         rsize *= 2;
@@ -50,20 +49,37 @@ double TreeSimulator::CalculateSize(Particle *p, int n)
   return rsize;
 }
 
-void TreeSimulator::CalculateGravity(BHNode *bn, int nnodes, Particle *particles, int n, double eps_square, double theta)
+void TreeSimulator::CalculateGravity()
 {
-  double rsize = CalculateSize(particles, n);
-  bn->AssignRoot(Vector3(), rsize * 2, particles, n);
+  double rsize = CalculateSize();
+  nodes->AssignRoot(Vector3(), rsize * 2, particles, n);
   int heap_remainder = nnodes - 1;
-  BHNode *btmp = bn + 1;
-  bn->CreateTreeRecursive(btmp, heap_remainder);
+  BHNode *btmp = nodes + 1;
+  nodes->CreateTreeRecursive(btmp, heap_remainder);
   //    bn->dump();
   //    PRL(bn->sanity_check());
-  bn->CalcPhysicalQuantity();
-  ClearAccAndPhi(particles, n);
+  nodes->CalcPhysicalQuantity();
+  ClearAccAndPhi();
 
-  #pragma omp parallel for schedule(dynamic)
-  for (int i = 0; i < n; i++)
-    bn->CalcGravityUsingTree(particles[i], eps_square, theta);
-    //	PR(i); PR(p->pos);PR(p->phi); PRL(p->acc);
+  vector<Particle*> groupArrays[GROUP_NUM];
+  for (int i = 0; i < n; i++) {
+    groupArrays[particles[i].CalcGroupIndex(nodes[0].centerPos, nodes[0].size)].emplace_back(&particles[i]);
+  }
+
+#pragma omp parallel for schedule(dynamic)
+  for (int i = 0; i < GROUP_NUM; i++) {
+    auto LET = nodes[0].MakeLET(Particle::CalcGroupCenter(i, nodes[0].size), eps_square, theta_square);
+    // cout << "Group: " << std::bitset<6>(i) << ", Particle: " << groupArrays[i].size() << ", LET: " << LET.size() << endl;
+    for (auto p : groupArrays[i])
+    {
+      for (auto node : LET)
+      {
+        Vector3 dx = node->pos - p->pos;
+        node->AccumulateForceFromPoint(dx, dx * dx, eps_square, *p);
+      }
+    }
+  }
+  // int poop; cin >> poop;
+  // nodes[0].CalcGravityUsingTree(particles[i], eps_square, theta_square);
+  //	PR(i); PR(p->pos);PR(p->phi); PRL(p->acc);
 }

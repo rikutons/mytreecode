@@ -202,3 +202,19 @@ void BHNode::AccumulateForceFromTree(Particle &particle, double eps_square, doub
       if (child[i] != NULL)
         child[i]->AccumulateForceFromTree(particle, eps_square, theta_square);
 }
+
+deque<BHNode*> BHNode::MakeLET(Vector3 particlePos, double eps_square, double theta_square) 
+{
+  deque<BHNode*> ret;
+  Vector3 dx = pos - particlePos;
+  double r_square = dx * dx;
+  if ((r_square * theta_square > size * size) || (nparticle == 1))
+    ret.emplace_back(this);
+  else
+    for (int i = 0; i < 8; i++)
+      if (child[i] != NULL) {
+        auto v = child[i]->MakeLET(particlePos, eps_square, theta_square);
+        ret.insert(ret.end(), v.begin(), v.end());
+      }
+  return ret;
+}
