@@ -38,6 +38,8 @@ HDDAsyncSimulator::HDDAsyncSimulator(ArgumentInterpreter arguments) :
     // cout << "i: " << i << ", mass: " << mass << ", pos: " << pos << ", index: " << index << endl;
     sub_areas[area_index].Write(p); // 速度と加速度の初期値(0, 0, 0)を書き込んでおく
   }
+  input_file.close();
+
   for (int i = 0; i < div_num; i++)
     sub_areas[i].EndWrite();
 
@@ -117,13 +119,20 @@ void HDDAsyncSimulator::Step()
         BHNode *btmp = nodes + 1;
         nodes->CreateTreeRecursive(btmp, heap_remainder);
         nodes->CalcPhysicalQuantity();
+#ifndef NO_SHARE_LET
         for (int j = 0; j < sub_areas[i].n; j++)
         {
           particles[j].acceralation = Vector3();
           particles[j].phi = particles[j].mass / sqrt(eps_square);
           groupArrays[particles[j].CalcGroupIndex(sub_areas[i].center_pos, sub_areas[i].size)].emplace_back(&particles[j]);
         }
+#endif
       }
+#ifdef NO_SHARE_LET
+      #pragma omp for schedule(dynamic)
+      for (int j = 0; j < sub_areas[i].n; j++)
+        nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
+#else
       #pragma omp for schedule(dynamic)
       for (int j = 0; j < GROUP_NUM; j++)
       {
@@ -135,13 +144,17 @@ void HDDAsyncSimulator::Step()
             node->AccumulateForceFromPoint(dx, dx * dx, eps_square, *p);
           }
       }
+#endif
+
     }
     sub_areas[i].DeleteLET();
 
     for (int j = 0; j < sub_areas[i].n; j++)
     {
       particles[j].Correct(dt);
+#ifdef OUTPUT
       output_file << particles[j].index << "," << t << "," << particles[j].pos << endl;
+#endif
       ke += particles[j].CalcKineticEnergy();
       pe += particles[j].CalcPotentialEnergy();
       particles[j].Predict(dt);
@@ -191,8 +204,10 @@ void HDDAsyncSimulator::Write(int i)
 
 void HDDAsyncSimulator::Output()
 {
+#ifdef OUTPUT
   // Phase 2の最中に書き込みを行うため、こちらの関数ではエネルギーだけを書くようにオーバーライドする(重心計算はとりあえず面倒なので端折る)
   status_output_file << t << ", 0, 0, 0, 0, 0, 0, " << energy << endl;
+#endif
 }
 
 // 小領域が8個であるとき限定の関数

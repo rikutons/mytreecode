@@ -31,15 +31,17 @@ public:
   {
     return mass * phi / 2;
   }
-  int CalcGroupIndex(Vector3 centerPos, double r) { // 64分割前提 centerPosから一辺がrの立方体を分割した際何番目に位置するかを返す
+  int CalcGroupIndex(Vector3 centerPos, double r)
+  { // 64分割前提 centerPosから一辺がrの立方体を分割した際何番目に位置するかを返す
     centerPos = pos - centerPos;
     centerPos /= (r / 4);
     int ret = 0;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
       int a = centerPos[i] + 2;
-      if(a < 0)
+      if (a < 0)
         a = 0;
-      if(a > 3)
+      if (a > 3)
         a = 3;
       ret += a << (i * 2);
     }
@@ -49,7 +51,8 @@ public:
   {
     return to_string(index) + " " + to_string(mass) + " " + to_string(pos) + " " + to_string(velocity) + " " + to_string(acceralation);
   }
-  static Vector3 CalcGroupCenter(int groupIndex, double r) { // 64分割前提 groupIndexからグループの中心が一辺rの立方体のどこに位置するかを返す
+  static Vector3 CalcGroupCenter(int groupIndex, double r)
+  { // 64分割前提 groupIndexからグループの中心が一辺rの立方体のどこに位置するかを返す
     Vector3 ret;
     for (int i = 0; i < 3; i++)
     {

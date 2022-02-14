@@ -5,27 +5,49 @@ double SubArea::write_time = 0;
 
 void SubArea::BeginWrite() 
 {
+#ifdef WATCH_IO
   start = system_clock::now();
+#endif
+  try
+  {
   output_file.open(tmpfile_path, ios::binary);
+    output_file.exceptions(std::ios_base::failbit);
+  } catch (const std::exception& e) {
+    cout << e.what() << endl;
+  }
+  if (output_file.fail())
+  {
+    cout << "failed." << endl;
+  }
   first_write_flag = true;  // 最終行が空行になってしまう現象をフラグを用いて回避する
+#ifdef WATCH_IO
   end = system_clock::now();
   AddWriteTime();
+#endif
 }
 
 void SubArea::Write(Particle particle) 
 {
+#ifdef WATCH_IO
   start = system_clock::now();
-  output_file.write((char*)&particle, sizeof(Particle));
+#endif
+  output_file.write((char *)&particle, sizeof(Particle));
+#ifdef WATCH_IO
   end = system_clock::now();
   AddWriteTime();
+#endif
 }
 
 void SubArea::EndWrite() 
 {
+#ifdef WATCH_IO
   start = system_clock::now();
+#endif
   output_file.close();
+#ifdef WATCH_IO
   end = system_clock::now();
   AddWriteTime();
+#endif
 }
 
 /*
@@ -34,7 +56,9 @@ void SubArea::EndWrite()
 */
 int SubArea::Read(Particle particles[]) 
 {
+#ifdef WATCH_IO
   start = system_clock::now();
+#endif
   int i = 0;
   input_file.open(tmpfile_path, ios::binary);
   do
@@ -45,8 +69,10 @@ int SubArea::Read(Particle particles[])
     i++;
   } while(!input_file.eof());
   input_file.close();
+#ifdef WATCH_IO
   end = system_clock::now();
   AddReadTime();
+#endif
   return n = i - 1; // 最後に不要な空のパーティクルを1つ読んでしまうので無くす
 }
 

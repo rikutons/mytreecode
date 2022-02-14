@@ -10,3 +10,5 @@ cd build
 ./a.out # Ctrl + Zでとめる
 fg 1
 fincore ../input/100000n_aligned.csv*
+
+straceでシステムコールを確認できる

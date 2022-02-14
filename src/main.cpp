@@ -7,6 +7,7 @@
 #include "simulators/hdd_async_simulator.hpp"
 #include "sub_area.hpp"
 #include "bhnode.hpp"
+#include "particle.hpp"
 
 using namespace std;
 using namespace chrono;
@@ -19,7 +20,9 @@ long long int calc_count = 0;
 
 double show_time(string message, system_clock::time_point start, system_clock::time_point end){
     double time = static_cast<double>(duration_cast<microseconds>(end - start).count() / 1000.0);
+#ifdef DETAIL
     cout << message << ": " << time << "[ms]" << endl;
+#endif
     return time;
 }
 
@@ -27,7 +30,9 @@ void Simulate(int mode, ArgumentInterpreter arguments)
 {
   system_clock::time_point start, end;
   SimulatorBase *simulator;
+#ifdef DETAIL
   cout << "  Initialization Start" << endl;
+#endif
   start = system_clock::now();
   switch (mode)
   {
@@ -49,26 +54,40 @@ void Simulate(int mode, ArgumentInterpreter arguments)
   }
 
   end = system_clock::now();
+#ifdef DETAIL
   show_time("  Initialization End", start, end);
+#endif
 
+#ifdef DETAIL
   cout << "  Simulation " << " Start" << endl;
+#endif
   start = system_clock::now();
   simulator->Simulate();
   end = system_clock::now();
   error += simulator->error;
+#ifdef DETAIL
   cout << "energy error: " << simulator->error << "[J]" << endl;
+#endif
 
   sim_time += show_time("  Simulation End", start, end);
+#ifdef WATCH_IO
   if(mode == 2 || mode == 3)
   {
+#ifdef DETAIL
     cout << "  write: " << SubArea::write_time << "[ms]" << endl;
+#endif
     write_time += SubArea::write_time;
     SubArea::write_time = 0;
+#ifdef DETAIL
     cout << "  read: " << SubArea::read_time << "[ms]" << endl;
+#endif
     read_time += SubArea::read_time;
     SubArea::read_time = 0;
   }
+#endif
+#ifdef DETAIL
   cout << "  the number of calc: " << BHNode::calc_count << endl;
+#endif
   calc_count += BHNode::calc_count;
   BHNode::calc_count = 0;
 }
@@ -76,6 +95,7 @@ void Simulate(int mode, ArgumentInterpreter arguments)
 int main(int argc, char* argv[])
 {
   ios::sync_with_stdio(false);
+  // Particle* p = new Particle[60000000];
 
   ArgumentInterpreter arguments(argc, argv);
 
@@ -98,11 +118,13 @@ int main(int argc, char* argv[])
   cout << "Avarage Parameters on " << arguments.cnt << " times execution" << endl;
   cout << "energy error: " << error / arguments.cnt << "[J]" << endl;
   cout << "simulation: " << sim_time / arguments.cnt << "[ms]" << endl;
+#ifdef WATCH_IO
   if (mode == 2 || mode == 3)
   {
     cout << "write: " << write_time / arguments.cnt << "[ms]" << endl;
     cout << "read: " << read_time / arguments.cnt << "[ms]" << endl;
   }
+#endif
   cout << "the number of calc: " << calc_count / arguments.cnt << endl;
   calc_count += BHNode::calc_count;
 }

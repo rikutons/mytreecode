@@ -12,6 +12,7 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
     sub_areas[i].theta_square = theta_square;
     sub_areas[i].eps_square = eps_square;
     sub_areas[i].tmpfile_path = "../input/" + arguments.input_filename + to_string(i) + ".tmp";
+    cout << sub_areas[i].tmpfile_path << endl;
     // 小領域が8個であるとき限定の処理
     sub_areas[i].center_pos = rsize / 2 * Vector3(1, 1, 1);
     sub_areas[i].size = rsize;
@@ -34,9 +35,11 @@ HDDPoweredSimulator::HDDPoweredSimulator(ArgumentInterpreter arguments) :
     input_file >> p.mass >> p.pos[0] >> p.pos[1] >> p.pos[2];
     p.index = i;
     int area_index = GetIndex(p.pos);
+    // cout << area_index << " " << p.pos << endl;
     // cout << "i: " << i << ", mass: " << mass << ", pos: " << pos << ", index: " << index << endl;
     sub_areas[area_index].Write(p); // 速度と加速度の初期値(0, 0, 0)を書き込んでおく
   }
+  input_file.close();
   for (int i = 0; i < div_num; i++)
     sub_areas[i].EndWrite();
 
@@ -99,6 +102,11 @@ void HDDPoweredSimulator::Step()
     nodes->CreateTreeRecursive(btmp, heap_remainder);
     nodes->CalcPhysicalQuantity();
 
+#ifdef NO_SHARE_LET
+    #pragma omp parallel for schedule(dynamic)
+    for (int j = 0; j < num; j++)
+      nodes->CalcGravityUsingTree(particles[j], eps_square, theta_square);
+#else
     vector<Particle*> groupArrays[GROUP_NUM];
     for (int j = 0; j < sub_areas[i].n; j++)
     {
@@ -117,15 +125,17 @@ void HDDPoweredSimulator::Step()
           node->AccumulateForceFromPoint(dx, dx * dx, eps_square, *p);
         }
     }
+#endif
     sub_areas[i].DeleteLET();
-
 
     sub_areas[i].BeginWrite();
     for (int j = 0; j < sub_areas[i].n; j++)
     {
       particles[j].Correct(dt);
       int index = GetIndex(particles[j].pos);
+#ifdef OUTPUT
       output_file << particles[j].index << "," << t << "," << particles[j].pos << endl;
+#endif
       ke += particles[j].CalcKineticEnergy();
       pe += particles[j].CalcPotentialEnergy();
       particles[j].Predict(dt);
@@ -164,8 +174,10 @@ void HDDPoweredSimulator::Step()
 
 void HDDPoweredSimulator::Output()
 {
+#ifdef OUTPUT
   // Phase 2の最中に書き込みを行うため、こちらの関数ではエネルギーだけを書くようにオーバーライドする(重心計算はとりあえず面倒なので端折る)
   status_output_file << t << ", 0, 0, 0, 0, 0, 0, " << energy << endl;
+#endif
 }
 
 // 小領域が8個であるとき限定の関数

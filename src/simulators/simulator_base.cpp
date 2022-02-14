@@ -2,6 +2,7 @@
 #include <iomanip>
 #include "../common.h"
 #include "simulator_base.hpp"
+#define MAKEINPUT
 
 SimulatorBase::SimulatorBase(ArgumentInterpreter arguments, bool allocate_memory)
 {
@@ -94,9 +95,12 @@ void SimulatorBase::InitParticlesOnAlignedShape()
   random_device rnd;
   mt19937 mt(rnd());
   uniform_real_distribution<> rand_real(0, 1);
-  // ofstream input;
-  // input.open("../input/1000n_aligned.csv", ios::out);
-  // input << n << " " << rsize << endl;
+#ifdef MAKEINPUT
+  cout << "Make " << n << "particles." << endl;
+  string path = "160000000n_aligned.csv";
+  ofstream input("../input/" + path);
+  input << n << " " << rsize << " 0" << endl;
+#endif
   for (int i = 0; i < n; i++)
   {
     int index = 8 * i / n;
@@ -107,10 +111,20 @@ void SimulatorBase::InitParticlesOnAlignedShape()
       if(index & (1 << j))
         p[j] *= -1;
     }
-    particles[i].pos = rsize * p;
-    particles[i].mass = 1.0 / n;
-    // input << particles[i].mass << " " << to_string(particles[i].pos) << endl;
+    // particles[i].pos = rsize * p;
+    // particles[i].mass = 1.0 / n;
+#ifdef MAKEINPUT
+    input << 1.0 / n << " " << to_string(rsize * p) << endl;
+#endif
   }
+#ifdef MAKEINPUT
+  input.close();
+  cout << "Made input file " << path << "." << endl << "quit?(y/n): ";
+  // char c;
+  // cin >> c;
+  // if(c == 'y')
+  exit(0);
+#endif
 }
 
 int SimulatorBase::AskSeeParticles() 
@@ -123,9 +137,11 @@ int SimulatorBase::AskSeeParticles()
 
 void SimulatorBase::Output() 
 {
+#ifdef OUTPUT
   for (int i = 0; i < n; i++)
     output_file << i << "," << t << "," << particles[i].pos << endl;
   status_output_file << t << ",";
+#endif
   PrintMassHeart(particles, n);
   PrintEnergies(particles, n);
 }
@@ -144,7 +160,9 @@ void SimulatorBase::PrintMassHeart(Particle *particles, int n)
   cmpos /= cmmass;
   cmvel /= cmmass;
   // cerr << "cm pos = " << cmpos << " vel = " << cmvel << endl;
+#ifdef OUTPUT
   status_output_file << cmpos << "," << cmvel;
+#endif
 }
 
 void SimulatorBase::PrintEnergies(Particle *particles, int n) 
@@ -156,7 +174,9 @@ void SimulatorBase::PrintEnergies(Particle *particles, int n)
     pe += particles[i].CalcPotentialEnergy();
   }
   energy = ke + pe;
+#ifdef OUTPUT
   status_output_file << "," << energy << endl;
+#endif
 }
 
 void SimulatorBase::ReadParticles() 

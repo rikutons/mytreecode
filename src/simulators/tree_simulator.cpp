@@ -60,7 +60,13 @@ void TreeSimulator::CalculateGravity()
   //    PRL(bn->sanity_check());
   nodes->CalcPhysicalQuantity();
   ClearAccAndPhi();
+#ifdef NO_SHARE_LET
+  #pragma omp parallel for schedule(dynamic)
+  for (int i = 0; i < n; i++)
+    nodes[0].CalcGravityUsingTree(particles[i], eps_square, theta_square);
+    //	PR(i); PR(p->pos);PR(p->phi); PRL(p->acc);
 
+#else
   vector<Particle*> groupArrays[GROUP_NUM];
   for (int i = 0; i < n; i++) {
     groupArrays[particles[i].CalcGroupIndex(nodes[0].centerPos, nodes[0].size)].emplace_back(&particles[i]);
@@ -79,6 +85,7 @@ void TreeSimulator::CalculateGravity()
       }
     }
   }
+#endif
   // int poop; cin >> poop;
   // nodes[0].CalcGravityUsingTree(particles[i], eps_square, theta_square);
   //	PR(i); PR(p->pos);PR(p->phi); PRL(p->acc);
